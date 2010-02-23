@@ -26,7 +26,8 @@ public class LoginPane extends JPanel implements ActionListener {
 		this.interfazCliente = interfazCliente;
 
 		setLayout(new FlowLayout());
-		txtLogin = new JTextField("tu cuenta");
+		txtLogin = new JTextField();
+		txtLogin.setToolTipText("nombre de usuario");
 		txtLogin.setColumns(18);
 
 		JPanel p = new JPanel();
@@ -34,6 +35,7 @@ public class LoginPane extends JPanel implements ActionListener {
 
 		p.add(txtLogin);
 		txtPass = new JPasswordField();
+		txtPass.setToolTipText("contraseña");
 		txtPass.setColumns(18);
 		p.add(txtPass);
 		btnConnect = new JButton("Conectar");
