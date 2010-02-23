@@ -1,7 +1,10 @@
 package Cliente;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Vector;
@@ -11,7 +14,9 @@ public class Cliente {
 	public Cliente() throws UnknownHostException, IOException{
 		
 		Socket s = new Socket("localhost",2249);
-		s.getOutputStream().write(2);
+		PrintWriter pw = new PrintWriter(s.getOutputStream());
+		BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+		
 		System.out.println(s.getInputStream().read());
 		
 		
