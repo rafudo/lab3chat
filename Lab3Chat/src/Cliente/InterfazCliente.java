@@ -2,6 +2,9 @@ package Cliente;
 
 
 
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 import javax.swing.Box;
 
 import javax.swing.JFrame;
@@ -60,7 +63,15 @@ public class InterfazCliente extends JFrame {
 	}
 
 	public void connect() {
-		cliente = new Cliente();
+		try {
+			cliente = new Cliente();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 
