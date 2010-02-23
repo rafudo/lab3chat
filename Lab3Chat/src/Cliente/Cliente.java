@@ -17,7 +17,7 @@ public class Cliente {
 		PrintWriter pw = new PrintWriter(s.getOutputStream());
 		BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		
-		System.out.println(s.getInputStream().read());
+		pw.println();
 		
 		
 	}
