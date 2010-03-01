@@ -1,7 +1,7 @@
 package Cliente;
 
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,7 +49,7 @@ public class LoginPane extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(btnConnect)) {
 			interfazCliente.connect();
-			if (interfazCliente.getCliente().isConnected()) {
+			if (interfazCliente.getCliente()!=null) {
 				interfazCliente.connectedScreen();
 			}
 		}
