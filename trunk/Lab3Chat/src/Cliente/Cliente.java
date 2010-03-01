@@ -9,21 +9,24 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
+import conectividad.Stream;
+
 public class Cliente {
 	private Vector<Contacto> contactos;
 	
-	public Cliente() throws UnknownHostException, IOException{
+	public Cliente() throws UnknownHostException, IOException, InterruptedException{
 		
-		Socket s = new Socket("localhost",2249);
-		PrintWriter pw = new PrintWriter(s.getOutputStream());
-		BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+		Socket s = new Socket("localhost",2245);
+	/*	PrintWriter pw = new PrintWriter(s.getOutputStream());
+		BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));*/
 		
-
-		pw.println("LOGIN");
-		pw.println("Camilo");
-		pw.println("123123123");
+Stream.sendObject(s, "LOGIN");
+		//pw.println("LOGIN\n");
 	
-		String line =br.readLine();
+		/*pw.println("Camilo");
+		pw.println("123123123");*/
+	
+	/*	String line =br.readLine();
 		if(!line.equals("ERROR")){
 			line=br.readLine();
 			
@@ -36,7 +39,7 @@ public class Cliente {
 				contactos.add(Contacto.crearContacto(log, ips, frase, con));
 			}
 			line=br.readLine();
-		}
+		}*/
 
 
 
@@ -54,8 +57,15 @@ public class Cliente {
 	}
 
 	public Vector<Contacto> getContacts() {		
-		
-		return contactos;
+		Vector<Contacto> contacts = new Vector<Contacto>();
+        ;
+        contacts.add(new Contacto("Camilo","123123",new byte[]{(byte) 255,(byte) 255,(byte) 255,(byte) 255},true));
+        contacts.add(new Contacto("Camilo","sdgsgsdg",new byte[]{(byte) 255,(byte) 255,(byte) 255,(byte) 255},false));
+        contacts.add(new Contacto("Camilo","hj,hj,hj",new byte[]{(byte) 128,(byte) 255,(byte) 255,(byte) 255},true));
+        contacts.add(new Contacto("Camilo","tyutyutyu",new byte[]{(byte) 255,(byte) 255,(byte) 255,(byte) 255},false));
+        contacts.add(new Contacto("Camilo","yumyumyu",new byte[]{(byte) 255,(byte) 255,(byte) 255,(byte) 255},true));
+        contacts.add(new Contacto("Camilo","iiuiyui",new byte[]{(byte) 255,(byte) 255,(byte) 255,(byte) 255},false));
+		return contacts;
 	}
 
 }
