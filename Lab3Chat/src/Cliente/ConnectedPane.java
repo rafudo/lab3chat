@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ListCellRenderer;
 
-public class PanelConectado extends JTabbedPane {
+public class ConnectedPane extends JTabbedPane {
 
 	
 
@@ -26,7 +26,7 @@ public class PanelConectado extends JTabbedPane {
 	private JList lstContactos;
 	private InterfazCliente interfaz;
 
-	public PanelConectado(InterfazCliente interfazCliente) {
+	public ConnectedPane(InterfazCliente interfazCliente) {
 		interfaz=interfazCliente;
 		panelContactos = new JPanel();
 		panelContactos.setLayout(new BorderLayout());

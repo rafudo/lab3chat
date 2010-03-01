@@ -56,7 +56,7 @@ public class InterfazCliente extends JFrame {
 
 	public void connectedScreen() {
 		getContentPane().removeAll();
-		add(new PanelConectado(this));
+		add(new ConnectedPane(this));
 		paintAll(getGraphics())	;
 		
 		
@@ -64,7 +64,7 @@ public class InterfazCliente extends JFrame {
 
 	public void connect() {
 		try {
-			cliente = new Cliente();
+			cliente = Cliente.createClient();
 		} catch (UnknownHostException e) {
 
 			e.printStackTrace();

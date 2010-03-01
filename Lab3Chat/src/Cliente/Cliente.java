@@ -12,44 +12,14 @@ import conectividad.Stream;
 
 public class Cliente {
 	private Vector<Contacto> contactos;
-	
-	public Cliente() throws UnknownHostException, IOException,
-			ClassNotFoundException {
-		contactos = new Vector<Contacto>();
-		Socket s = new Socket("localhost", 2245);
-		
+	private Vector<Grupo> grupos;
+	private String frase;
 
-		Stream.sendObject(s, "LOGIN");
-		Stream.sendObject(s, "Camilo");
-
-		Stream.sendObject(s, "123123123");
-
-		String line = (String) Stream.receiveObject(s);
-		if (!line.equals("ERROR")) {
-			line = (String) Stream.receiveObject(s);
-
-			int n = Integer.parseInt(line);
-			for (int i = 0; i < n; i++) {
-				String log = (String) Stream.receiveObject(s);
-				String con = (String) Stream.receiveObject(s);
-				String frase = (String) Stream.receiveObject(s);
-				String ips = (String) Stream.receiveObject(s);
-				contactos.add(Contacto.crearContacto(log, ips, frase, con));
-			}		
-			
-			line = (String) Stream.receiveObject(s);
-
-			n = Integer.parseInt(line);
-			for (int i = 0; i < n; i++) {
-				String log = (String) Stream.receiveObject(s);
-				String con = (String) Stream.receiveObject(s);
-				String frase = (String) Stream.receiveObject(s);
-				String ips = (String) Stream.receiveObject(s);
-				contactos.add(Contacto.crearContacto(log, ips, frase, con));
-			}
-			line = (String) Stream.receiveObject(s);
-		}
-
+	private Cliente(Vector<Contacto> contacts, Vector<Grupo> grupos,
+			String frase)  {
+		contactos = contacts;
+		this.frase = frase;
+		this.grupos=grupos;
 	}
 
 	public void disconnect() {
@@ -57,11 +27,11 @@ public class Cliente {
 			Socket s = new Socket("localhost", 2245);
 			Stream.sendObject(s, "CHAO");
 		} catch (UnknownHostException e) {
-			
+
 		} catch (IOException e) {
-			
+
 		}
-		
+
 	}
 
 	public boolean isConnected() {
@@ -70,8 +40,44 @@ public class Cliente {
 	}
 
 	public Vector<Contacto> getContacts() {
-		
+
 		return contactos;
+	}
+
+	public static Cliente createClient() throws UnknownHostException,
+			IOException, ClassNotFoundException {
+		Vector<Contacto> contactos = new Vector<Contacto>();
+		Vector<Grupo> grupos = new Vector<Grupo>();
+		String frase = "";
+		;
+		Socket s = new Socket("localhost", 2245);
+		Stream.sendObject(s, "LOGIN");
+		Stream.sendObject(s, "Camilo");
+		Stream.sendObject(s, "123123123");
+
+		String line = (String) Stream.receiveObject(s);
+		if (!line.equals("ERROR")) {
+			frase = line;
+			line = (String) Stream.receiveObject(s);
+
+			int n = Integer.parseInt(line);
+			for (int i = 0; i < n; i++) {
+				String log = (String) Stream.receiveObject(s);
+				String con = (String) Stream.receiveObject(s);
+				String frasec = (String) Stream.receiveObject(s);
+				String ips = (String) Stream.receiveObject(s);
+				contactos.add(Contacto.crearContacto(log, ips, frasec, con));
+			}
+			line = (String) Stream.receiveObject(s);
+			n = Integer.parseInt(line);
+			for (int i = 0; i < n; i++) {
+				
+			}
+			return new Cliente(contactos, grupos, frase);
+		} else {
+			return null;
+		}
+	
 	}
 
 }
