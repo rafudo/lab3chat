@@ -24,21 +24,24 @@ public class InterfazServidor {
 		 */
 
 		String line = (String) Stream.receiveObject(s);
-		
-		
-		
-		/*
-		 * line=br.readLine(); System.out.println(line); line=br.readLine();
-		 * System.out.println(line);
-		 */
+		line = (String) Stream.receiveObject(s);
+		line = (String) Stream.receiveObject(s);
 
-		/*
-		 * pw.println("HOLA AMIGUITO"); pw.println("3"); pw.println("andres");
-		 * pw.println("SI"); pw.println("Soy andres teses"); pw.println("asdf");
-		 * pw.println("kulimbis"); pw.println("NO"); pw.println("KULIMBISAD");
-		 * pw.println("asdf"); pw.println("chicha"); pw.println("SI");
-		 * pw.println("AFREINASS"); pw.println("asdf"); pw.println("0");
-		 */
+		Stream.sendObject(s, "HOLA AMIGUITO");
+		Stream.sendObject(s, "3");
+		Stream.sendObject(s, "andres");
+		Stream.sendObject(s, "SI");
+		Stream.sendObject(s, "Soy andres teses");
+		Stream.sendObject(s, "asdf");
+		Stream.sendObject(s, "kulimbis");
+		Stream.sendObject(s, "NO");
+		Stream.sendObject(s, "KULIMBISAD");
+		Stream.sendObject(s, "asdf");
+		Stream.sendObject(s, "chicha");
+		Stream.sendObject(s, "SI");
+		Stream.sendObject(s, "AFREINASS");
+		Stream.sendObject(s, "asdf");
+		Stream.sendObject(s, "0");
 
 	}
 
