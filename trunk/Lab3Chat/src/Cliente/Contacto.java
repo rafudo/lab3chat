@@ -41,10 +41,13 @@ public class Contacto {
 	public static Contacto crearContacto(String log, String ips, String frase, String con){
 		boolean connected  = con.equals("SI");
 		byte[] ip = new byte[4];
-		ip[0]=(byte)ips.charAt(0);
-		ip[1]=(byte)ips.charAt(1);
-		ip[2]=(byte)ips.charAt(2);
-		ip[3]=(byte)ips.charAt(3);
+		
+		String[] laip=ips.split("\\.");
+		
+		ip[0]=Byte.parseByte(laip[0]);
+		ip[1]=Byte.parseByte(laip[1]);
+		ip[2]=Byte.parseByte(laip[2]);
+		ip[3]=Byte.parseByte(laip[3]);
 		
 		return new Contacto(log,frase,ip, connected);
 		
