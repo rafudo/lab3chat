@@ -66,13 +66,13 @@ public class InterfazCliente extends JFrame {
 		try {
 			cliente = new Cliente();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (ClassNotFoundException e) {
+
 			e.printStackTrace();
 		}
 		
