@@ -62,9 +62,9 @@ public class InterfazCliente extends JFrame {
 		
 	}
 
-	public void connect() {
+	public void connect(String username, String password) {
 		try {
-			cliente = Cliente.createClient();
+			cliente = Cliente.createClient(username,password);
 		} catch (UnknownHostException e) {
 
 			e.printStackTrace();

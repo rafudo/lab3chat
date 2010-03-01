@@ -48,7 +48,7 @@ public class LoginPane extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(btnConnect)) {
-			interfazCliente.connect();
+			interfazCliente.connect(txtLogin.getText(),new String(txtPass.getPassword()));
 			if (interfazCliente.getCliente()!=null) {
 				interfazCliente.connectedScreen();
 			}

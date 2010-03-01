@@ -1,9 +1,7 @@
 package Cliente;
 
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Vector;
@@ -14,9 +12,11 @@ public class Cliente {
 	private Vector<Contacto> contactos;
 	private Vector<Grupo> grupos;
 	private String frase;
+	private String username;
 
-	private Cliente(Vector<Contacto> contacts, Vector<Grupo> grupos,
+	private Cliente(String username, Vector<Contacto> contacts, Vector<Grupo> grupos,
 			String frase)  {
+		this.username=username;
 		contactos = contacts;
 		this.frase = frase;
 		this.grupos=grupos;
@@ -44,16 +44,16 @@ public class Cliente {
 		return contactos;
 	}
 
-	public static Cliente createClient() throws UnknownHostException,
+	public static Cliente createClient(String username, String password) throws UnknownHostException,
 			IOException, ClassNotFoundException {
 		Vector<Contacto> contactos = new Vector<Contacto>();
 		Vector<Grupo> grupos = new Vector<Grupo>();
 		String frase = "";
-		;
+	
 		Socket s = new Socket("localhost", 2245);
 		Stream.sendObject(s, "LOGIN");
-		Stream.sendObject(s, "Camilo");
-		Stream.sendObject(s, "123123123");
+		Stream.sendObject(s, username);
+		Stream.sendObject(s, password);
 
 		String line = (String) Stream.receiveObject(s);
 		if (!line.equals("ERROR")) {
@@ -73,11 +73,21 @@ public class Cliente {
 			for (int i = 0; i < n; i++) {
 				
 			}
-			return new Cliente(contactos, grupos, frase);
+			return new Cliente(username,contactos, grupos, frase);
 		} else {
 			return null;
 		}
 	
+	}
+
+	public String getUsername() {
+
+		return username;
+	}
+
+	public String getFrase() {
+		// TODO Auto-generated method stub
+		return frase;
 	}
 
 }
