@@ -13,6 +13,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
 public class ConnectedPane extends JTabbedPane {
@@ -25,7 +26,7 @@ public class ConnectedPane extends JTabbedPane {
 	private JList lstContactos;
 	private InterfazCliente interfaz;
 	private JLabel usernameLab;
-	private JLabel nickLab;
+	private JTextField nickLab;
 
 	public ConnectedPane(InterfazCliente interfazCliente) {
 		interfaz = interfazCliente;
@@ -35,7 +36,7 @@ public class ConnectedPane extends JTabbedPane {
 		usernameLab.setFont(new Font("Arial", Font.BOLD, 20));
 		JPanel panelNorte = new JPanel();
 		panelNorte.setLayout(new FlowLayout());
-		nickLab = new JLabel(interfaz.getCliente().getFrase());
+		nickLab = new JTextField(interfaz.getCliente().getFrase());
 		nickLab.setFont(new Font("Arial", Font.ITALIC, 10));
 		panelNorte.add(usernameLab);
 		panelNorte.add(nickLab);
