@@ -86,8 +86,13 @@ public class Cliente {
 	}
 
 	public String getFrase() {
-		// TODO Auto-generated method stub
+
 		return frase;
+	}
+
+	public void cambiarFrase(String text) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
