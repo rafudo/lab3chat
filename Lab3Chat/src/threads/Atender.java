@@ -45,17 +45,17 @@ public class Atender extends Thread {
 			}
 
 			else if (line.equals("PASS")) {
-				pass();
+				pass(null, null);
 			}
 
 			else if (line.equals("FRASE")) {
-				frase();
+				frase(null, null);
 			}
 
 			else if (line.equals("CHARLA")) {
-				charla();
+				charla(null, null);
 			} else if (line.equals("AMIGO")) {
-				solicitud();
+				solicitud(null, null);
 			}
 			// TODO Grupo
 
