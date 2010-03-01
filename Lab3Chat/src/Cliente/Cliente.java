@@ -2,6 +2,7 @@ package Cliente;
 
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Vector;
@@ -26,6 +27,7 @@ public class Cliente {
 		try {
 			Socket s = new Socket("localhost", 2245);
 			Stream.sendObject(s, "CHAO");
+			Stream.sendObject(s, username);
 		} catch (UnknownHostException e) {
 
 		} catch (IOException e) {
@@ -70,9 +72,20 @@ public class Cliente {
 			}
 			line = (String) Stream.receiveObject(s);
 			n = Integer.parseInt(line);
+			
 			for (int i = 0; i < n; i++) {
 				
 			}
+			
+			try
+			{
+			 InetAddress addr = InetAddress.getLocalHost();
+			 Stream.sendObject(s,addr.getHostAddress());
+			 
+			}
+			catch (UnknownHostException e) { 
+				Stream.sendObject(s,"0.0.0.0");
+			} 
 			return new Cliente(username,contactos, grupos, frase);
 		} else {
 			return null;
