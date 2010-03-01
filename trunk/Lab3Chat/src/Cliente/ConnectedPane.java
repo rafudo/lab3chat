@@ -5,6 +5,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -38,10 +42,25 @@ public class ConnectedPane extends JTabbedPane {
 		panelNorte.setLayout(new FlowLayout());
 		nickLab = new JTextField(interfaz.getCliente().getFrase());
 		nickLab.setFont(new Font("Arial", Font.ITALIC, 10));
+		nickLab.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				interfaz.getCliente().cambiarFrase(nickLab.getText());
+				
+			}
+		});
 		panelNorte.add(usernameLab);
 		panelNorte.add(nickLab);
 		addTab("Contactos", panelContactos);
 		lstContactos = new JList();
+		lstContactos.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2){
+					
+				}
+			}
+		});
 		lstContactos.setCellRenderer(new ContactsRenderer());
 		lstContactos.setListData(interfaz.getCliente().getContacts());
 		JScrollPane sp = new JScrollPane();
@@ -50,6 +69,8 @@ public class ConnectedPane extends JTabbedPane {
 		panelContactos.add(panelNorte, BorderLayout.NORTH);
 
 	}
+
+	
 
 }
 
