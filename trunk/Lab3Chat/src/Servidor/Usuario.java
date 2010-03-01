@@ -41,10 +41,7 @@ public class Usuario
 	 */
 	private String ip;
 	
-	/**
-	 * Puerto de escucha del usuario
-	 */
-	private int puerto;
+
 	
 	// Constructor.
 	/**
@@ -122,20 +119,6 @@ public class Usuario
 		return log.equals(((Usuario)arg0).darLog());
 	}
 	
-	/**
-	 * Retorna el puerto de escucha.
-	 */
-	public int darPuerto()
-	{
-		return puerto;
-	}
 	
-	/**
-	 * Modifica el puerto de escucha.
-	 */
-	public void setPuerto(int nPuerto)
-	{
-		puerto = nPuerto;
-	}
 }
 

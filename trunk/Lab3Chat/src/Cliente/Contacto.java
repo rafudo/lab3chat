@@ -5,10 +5,10 @@ package Cliente;
 public class Contacto {
 	private String frase;
 	private String username;
-	private byte[] ip;
+	private String ip;
 	private boolean connected;
 	
-	public Contacto(String username, String frase, byte[] ip, boolean connected) {
+	public Contacto(String username, String frase, String ip, boolean connected) {
 		
 		this.frase = frase;
 		this.username = username;
@@ -34,22 +34,14 @@ public class Contacto {
 		return connected;
 	}
 	
-	public byte[] getIp(){
+	public String getIp(){
 		return ip;
 	}
 	
 	public static Contacto crearContacto(String log, String ips, String frase, String con){
-		boolean connected  = con.equals("SI");
-		byte[] ip = new byte[4];
-		
-		String[] laip=ips.split("\\.");
-		
-		ip[0]=Byte.parseByte(laip[0]);
-		ip[1]=Byte.parseByte(laip[1]);
-		ip[2]=Byte.parseByte(laip[2]);
-		ip[3]=Byte.parseByte(laip[3]);
-		
-		return new Contacto(log,frase,ip, connected);
+		boolean connected  = con.equals("SI");		
+		System.out.println(ips);
+		return new Contacto(log,frase,ips, connected);
 		
 	}
 

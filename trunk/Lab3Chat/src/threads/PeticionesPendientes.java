@@ -42,7 +42,7 @@ public class PeticionesPendientes extends Thread
 						Usuario userPara = Servidor.darUsuario(peticion.para);
 						Usuario userDe = Servidor.darUsuario(peticion.de);
 						
-						Socket canal = new Socket(userPara.darIP(), userPara.darPuerto());
+						Socket canal = new Socket(userPara.darIP(), 2010);
 						PrintWriter out = new PrintWriter(canal.getOutputStream(), true);
 						BufferedReader in = new BufferedReader(new InputStreamReader(canal.getInputStream()));
 						
@@ -77,7 +77,7 @@ public class PeticionesPendientes extends Thread
 							
 							if(Servidor.estaConectado(userDe.darLog()))
 							{
-								canal = new Socket(userDe.darIP(), userDe.darPuerto());
+								canal = new Socket(userDe.darIP(), 2010);
 								out = new PrintWriter(canal.getOutputStream(), true);
 								in = new BufferedReader(new InputStreamReader(canal.getInputStream()));
 								

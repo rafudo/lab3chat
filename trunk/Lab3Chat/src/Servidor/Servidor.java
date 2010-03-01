@@ -112,9 +112,10 @@ public class Servidor
 			servidor = new Servidor();
 			servidor.cargarServidor();
 		}
-		
-		if(servidor.conectados.contains(log))
+		System.out.println("busca " +log);
+		if(servidor.conectados.contains(new Usuario(log,"","")))
 		{
+			System.out.println("paso");
 			return servidor.conectados.get(servidor.conectados.indexOf(new Usuario(log, "", "")));
 		}
 		else if(servidor.usuarios.contains(log))
@@ -127,7 +128,7 @@ public class Servidor
 			
 			while(n >= 0)
 			{
-				amigos.add(servidor.info.getProperty(log+AMIGO+"."+n));
+				amigos.add(servidor.info.getProperty(log+AMIGO+n));
 				n--;
 			}
 			
@@ -164,8 +165,8 @@ public class Servidor
 			servidor = new Servidor();
 			servidor.cargarServidor();
 		}
-		else
-			servidor.conectados.add(user);
+		
+		servidor.conectados.add(user);
 	}
 	
 	/**
@@ -379,5 +380,15 @@ public class Servidor
 		servidor.info.setProperty(user.darLog()+AMIGO+n, amigo.darLog());
 		n++;
 		servidor.info.setProperty(user.darLog()+NAMIGOS, n+"");
+	}
+
+	public static boolean existe(String login) {
+		if(servidor == null)
+		{
+			servidor = new Servidor();
+			servidor.cargarServidor();
+		}
+		
+		return servidor.usuarios.contains(login);
 	}
 }

@@ -57,7 +57,8 @@ public class ConnectedPane extends JTabbedPane {
 		lstContactos.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==2){
-					
+					int index=lstContactos.locationToIndex(e.getPoint());
+					System.out.println(lstContactos.getModel().getElementAt(index).getClass());
 				}
 			}
 		});
