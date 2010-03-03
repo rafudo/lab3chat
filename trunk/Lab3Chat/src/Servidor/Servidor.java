@@ -250,8 +250,10 @@ public class Servidor
 	
 	/**
 	 * Cambia el password de un usuario
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void cambioPass(Usuario user, String nPass)
+	public static void cambioPass(Usuario user, String nPass) throws FileNotFoundException, IOException
 	{
 		if(servidor == null)
 		{
@@ -261,6 +263,7 @@ public class Servidor
 		
 		user.cambiarPass(nPass);
 		servidor.info.setProperty(user.darLog()+PASS, nPass);
+		servidor.info.store(new FileOutputStream(INFO), null);
 	}
 	
 	/**

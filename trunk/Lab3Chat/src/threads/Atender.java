@@ -45,11 +45,11 @@ public class Atender extends Thread {
 			}
 
 			else if (line.equals("PASS")) {
-				pass(null, null);
+				pass();
 			}
 
 			else if (line.equals("FRASE")) {
-				frase(null, null);
+				frase();
 			}
 
 			else if (line.equals("CHARLA")) {
@@ -124,7 +124,7 @@ public class Atender extends Thread {
 				Stream.sendObject(cliente, amigo.darLog());
 				Stream.sendObject(cliente, conectado);
 				Stream.sendObject(cliente, amigo.darFrase());
-				if(conectado.equals("SI")){System.out.println(amigo.darIP());
+				if(conectado.equals("SI")){
 				Stream.sendObject(cliente,amigo.darIP());}
 				else Stream.sendObject(cliente, "0");
 
@@ -135,7 +135,7 @@ public class Atender extends Thread {
 			Stream.sendObject(cliente, "0");
 
 			user.setIP((String) Stream.receiveObject(cliente));
-			System.out.println(user.darIP()+"hgfñdj");
+			user.setPuerto(Integer.parseInt((String) Stream.receiveObject(cliente)) );
 
 			Servidor.agregarConectado(user);
 
@@ -151,8 +151,10 @@ public class Atender extends Thread {
 
 	/**
 	 * En caso que se desee desconectar.
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
 	 */
-	private void chao() throws Exception {
+	private void chao() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.darUsuario((String) Stream.receiveObject(cliente));
 		Servidor.desconectar(user.darLog());
 		Stream.sendObject(cliente, "CHAO");
@@ -199,27 +201,36 @@ public class Atender extends Thread {
 
 	/**
 	 * En caso que desee cambiar su pass.
+	 * PASS:<LOG>:<PASSACTUAL>:<NUEVAPASS>:<CONF>
 	 */
-	private void pass(String[] partesMensaje, PrintWriter out) throws Exception {
-		Usuario user = Servidor.darUsuario(partesMensaje[1]);
-
-		if (partesMensaje[1].equals(user.darPass())
-				&& partesMensaje[2].equals(partesMensaje[2])) {
-			Servidor.cambioPass(user, partesMensaje[1]);
-			out.println("OK");
+	private void pass() throws Exception {
+		Usuario user = Servidor.darUsuario((String)Stream.receiveObject(cliente));
+		String ps;
+		if (((String)Stream.receiveObject(cliente)).equals(user.darPass())
+				&& (ps=(String)Stream.receiveObject(cliente)).equals(((String)Stream.receiveObject(cliente)))) {
+			try{Servidor.cambioPass(user,ps);
+			}catch(Exception e){
+				Stream.sendObject(cliente, "ERROR");
+			}
+			
+			Stream.sendObject(cliente, "OK");
 		} else
-			out.println("ERROR");
+			Stream.sendObject(cliente, "ERROR");
 
 	}
 
 	/**
 	 * En caso que desee cambiar su frase.
+	 * FRASE:<LOG>:<PASS>:<NUEVAFRASE>
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
 	 */
-	private void frase(String[] partesMensaje, PrintWriter out)
-			throws Exception {
-		Usuario user = Servidor.darUsuario(partesMensaje[4]);
-		Servidor.cambioFrase(user, partesMensaje[1]);
-		out.println("OK");
+	private void frase() throws IOException, ClassNotFoundException
+			 {
+		Usuario user = Servidor.darUsuario((String)Stream.receiveObject(cliente));
+		if(user.darPass().equals((String)Stream.receiveObject(cliente)))
+		Servidor.cambioFrase(user, (String)Stream.receiveObject(cliente));
+		Stream.sendObject(cliente, "OK");
 	}
 
 	/**
