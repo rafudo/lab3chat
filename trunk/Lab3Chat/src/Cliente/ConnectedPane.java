@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -20,7 +22,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
-public class ConnectedPane extends JTabbedPane {
+public class ConnectedPane extends JTabbedPane implements Observer{
 
 	/**
 	 * 
@@ -63,12 +65,20 @@ public class ConnectedPane extends JTabbedPane {
 			}
 		});
 		lstContactos.setCellRenderer(new ContactsRenderer());
+		interfaz.getCliente().addObserver(this);
 		lstContactos.setListData(interfaz.getCliente().getContacts());
 		JScrollPane sp = new JScrollPane();
 		sp.setViewportView(lstContactos);
 		panelContactos.add(sp, BorderLayout.CENTER);
 		panelContactos.add(panelNorte, BorderLayout.NORTH);
 
+	}
+
+	@Override
+	public void update(Observable arg0, Object lista) {
+		
+		lstContactos.setListData(interfaz.getCliente().getContacts());
+		
 	}
 
 	
