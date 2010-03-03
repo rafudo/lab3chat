@@ -41,6 +41,11 @@ public class Usuario
 	 */
 	private String ip;
 	
+	/**
+	 * Puerto
+	 */
+	private int port;
+	
 
 	
 	// Constructor.
@@ -119,9 +124,13 @@ public class Usuario
 		return log.equals(((Usuario)arg0).darLog());
 	}
 
-	public int darPort() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int darPort() {		
+		return port;
+	}
+
+	public void setPuerto(int parseInt) {
+		port=parseInt;
+		
 	}
 	
 	
