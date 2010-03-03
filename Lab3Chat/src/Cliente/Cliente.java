@@ -5,11 +5,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Observable;
 import java.util.Vector;
 
 import conectividad.Stream;
 
-public class Cliente {
+public class Cliente extends Observable{
 	private Vector<Contacto> contactos;
 	private Vector<Grupo> grupos;
 	private String frase;
@@ -107,5 +108,7 @@ public class Cliente {
 		// TODO Auto-generated method stub
 		
 	}
+
+	
 
 }

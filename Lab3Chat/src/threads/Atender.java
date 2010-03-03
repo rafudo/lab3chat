@@ -139,7 +139,7 @@ public class Atender extends Thread {
 
 			Servidor.agregarConectado(user);
 
-			Monitor moni = new Monitor(user.darLog(), user.darIP(), 2010);
+			Monitor moni = new Monitor(user.darLog(), user.darIP(), user.darPort());
 			moni.start();
 
 			return true;

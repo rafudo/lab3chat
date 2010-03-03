@@ -118,6 +118,11 @@ public class Usuario
 	{
 		return log.equals(((Usuario)arg0).darLog());
 	}
+
+	public int darPort() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	
 }
