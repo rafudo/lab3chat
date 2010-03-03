@@ -15,13 +15,15 @@ public class Cliente extends Observable{
 	private Vector<Grupo> grupos;
 	private String frase;
 	private String username;
+	private int port;
 
 	private Cliente(String username, Vector<Contacto> contacts, Vector<Grupo> grupos,
-			String frase)  {
+			String frase, int port)  {
 		this.username=username;
 		contactos = contacts;
 		this.frase = frase;
 		this.grupos=grupos;
+		this.port=port;
 	}
 
 	public void disconnect() {
@@ -77,17 +79,18 @@ public class Cliente extends Observable{
 			for (int i = 0; i < n; i++) {
 				
 			}
-			
+			int port=Stream.findFreePort(1000,2000);
 			try
 			{
 			 InetAddress addr = InetAddress.getLocalHost();
+			 
 			 Stream.sendObject(s,addr.getHostAddress());
 			 
 			}
 			catch (UnknownHostException e) { 
 				Stream.sendObject(s,"0.0.0.0");
 			} 
-			return new Cliente(username,contactos, grupos, frase);
+			return new Cliente(username,contactos, grupos, frase, port);
 		} else {
 			return null;
 		}
