@@ -37,7 +37,7 @@ public class Servidor
 	/**
 	 * Lista de Usuarios Conectados
 	 */
-	private ArrayList<Usuario> conectados;
+	private Hashtable<String,Usuario> conectados;
 	
 	/**
 	 * Lista de notificaciones pendientes.
@@ -64,7 +64,7 @@ public class Servidor
 	public Servidor()
 	{
 		usuarios = new ArrayList<String>();
-		conectados = new ArrayList<Usuario>();
+		conectados = new Hashtable<String, Usuario>();
 		peticionesAmistad = new ArrayList<PeticionAmigo>();
 	}
 	
@@ -78,7 +78,7 @@ public class Servidor
 		{
 			servidor = new Servidor();
 			servidor.cargarServidor();
-			System.out.println("Entro");
+
 		}
 		
 		PeticionesPendientes hilo = new PeticionesPendientes();
@@ -88,8 +88,7 @@ public class Servidor
 		{
 			try
 			{
-				System.out.println("Esperando conecciones...");
-	            if(servidor.server == null) System.out.println("mierda");
+				System.out.println("Esperando conecciones...");	           
 				Socket cliente = servidor.server.accept();
 				Atender thread = new Atender(cliente);
 				thread.start();
@@ -116,7 +115,7 @@ public class Servidor
 		if(servidor.conectados.contains(new Usuario(log,"","")))
 		{
 			System.out.println("paso");
-			return servidor.conectados.get(servidor.conectados.indexOf(new Usuario(log, "", "")));
+			return servidor.conectados.get(log);
 		}
 		else if(servidor.usuarios.contains(log))
 		{
@@ -166,7 +165,7 @@ public class Servidor
 			servidor.cargarServidor();
 		}
 		
-		servidor.conectados.add(user);
+		servidor.conectados.put(user.darLog(),user);
 	}
 	
 	/**
@@ -245,7 +244,7 @@ public class Servidor
 		Usuario temp = new Usuario(log, "", "");
 		
 		if(servidor.conectados.contains(temp))
-			servidor.conectados.remove(servidor.conectados.indexOf(temp));
+			servidor.conectados.remove(log);
 	}
 	
 	/**

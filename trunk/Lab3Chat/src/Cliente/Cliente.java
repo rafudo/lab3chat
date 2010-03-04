@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Vector;
 
+import conectividad.InputListener;
 import conectividad.Stream;
 
 public class Cliente extends Observable{
@@ -92,6 +93,8 @@ public class Cliente extends Observable{
 			catch (UnknownHostException e) { 
 				Stream.sendObject(s,"0.0.0.0");
 			} 
+			Stream.sendObject(s, ""+port);
+			s.close();
 			return new Cliente(username,password,contactos, grupos, frase, port);
 		} else {
 			return null;
@@ -114,6 +117,13 @@ public class Cliente extends Observable{
 		
 	}
 
+	public int darPort() {
+		return port;
+	}
+
 	
+
+	
+
 
 }

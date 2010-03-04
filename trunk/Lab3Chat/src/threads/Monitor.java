@@ -46,7 +46,7 @@ public class Monitor extends Thread
 			try
 			{
 				Thread.yield();
-				Thread.sleep(10000);
+				Thread.sleep(1000000);
 			}
 			catch(Exception e)
 			{}
