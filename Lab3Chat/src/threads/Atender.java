@@ -140,7 +140,7 @@ public class Atender extends Thread {
 			Servidor.addConnected(user);
 			for(int i=0;i<user.amigos.size();i++)
 			{
-				
+				(new NewFriendList(user.amigos.get(i))).start();
 			}
 			Monitor moni = new Monitor(user.getLog(), user.getIP(), user.getPort());
 			moni.start();
