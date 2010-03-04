@@ -74,7 +74,8 @@ public class Cliente extends Observable{
 				String con = (String) Stream.receiveObject(s);
 				String frasec = (String) Stream.receiveObject(s);
 				String ips = (String) Stream.receiveObject(s);
-				contactos.add(Contacto.crearContacto(log, ips, frasec, con));
+				int porto = Integer.parseInt((String) Stream.receiveObject(s));
+				contactos.add(Contacto.crearContacto(log, ips, frasec, con, porto));
 			}
 			line = (String) Stream.receiveObject(s);
 			n = Integer.parseInt(line);
