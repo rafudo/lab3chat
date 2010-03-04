@@ -33,27 +33,27 @@ public class PeticionesPendientes extends Thread
 			{
 				Thread.sleep(5000);
 				
-				PeticionAmigo peticion = Servidor.siguientePeticionPendiente();
+				PeticionAmigo peticion = Servidor.nextPendingRequest();
 				
 				while(peticion != null)
 				{
-					if(Servidor.estaConectado(peticion.para))
+					if(Servidor.isConnected(peticion.para))
 					{
-						Usuario userPara = Servidor.darUsuario(peticion.para);
-						Usuario userDe = Servidor.darUsuario(peticion.de);
+						Usuario userPara = Servidor.getUsuario(peticion.para);
+						Usuario userDe = Servidor.getUsuario(peticion.de);
 						
-						Socket canal = new Socket(userPara.darIP(), 2010);
+						Socket canal = new Socket(userPara.getIP(), 2010);
 						PrintWriter out = new PrintWriter(canal.getOutputStream(), true);
 						BufferedReader in = new BufferedReader(new InputStreamReader(canal.getInputStream()));
 						
-						out.println(userDe.darLog()+":"+userDe.darFrase());
+						out.println(userDe.getLog()+":"+userDe.getFrase());
 						
 						String respuesta = in.readLine();
 						
 						if(respuesta.equals("OK"))
 						{
-							Servidor.agregarleUnAmigo(userPara, userDe);
-							Servidor.agregarleUnAmigo(userDe, userPara);
+							Servidor.addFriendToUser(userPara, userDe);
+							Servidor.addFriendToUser(userDe, userPara);
 							
 							int n = userPara.amigos.size();
 							out.println("NUEVALISTA:" + n);
@@ -61,23 +61,23 @@ public class PeticionesPendientes extends Thread
 							
 							while(n >= 0)
 							{
-								Usuario amigo = Servidor.darUsuario(userPara.amigos.get(n));
+								Usuario amigo = Servidor.getUsuario(userPara.amigos.get(n));
 								
 								String conectado = "NO";
 								
-								if(Servidor.estaConectado(amigo.darLog()))
+								if(Servidor.isConnected(amigo.getLog()))
 									conectado = "SI";
 								
-								out.println(amigo.darLog()+":"+conectado+":"+amigo.darFrase());
+								out.println(amigo.getLog()+":"+conectado+":"+amigo.getFrase());
 								
 								n--;
 							}
 							
 							canal.close();
 							
-							if(Servidor.estaConectado(userDe.darLog()))
+							if(Servidor.isConnected(userDe.getLog()))
 							{
-								canal = new Socket(userDe.darIP(), 2010);
+								canal = new Socket(userDe.getIP(), 2010);
 								out = new PrintWriter(canal.getOutputStream(), true);
 								in = new BufferedReader(new InputStreamReader(canal.getInputStream()));
 								
@@ -87,14 +87,14 @@ public class PeticionesPendientes extends Thread
 								
 								while(n >= 0)
 								{
-									Usuario amigo = Servidor.darUsuario(userDe.amigos.get(n));
+									Usuario amigo = Servidor.getUsuario(userDe.amigos.get(n));
 									
 									String conectado = "NO";
 									
-									if(Servidor.estaConectado(amigo.darLog()))
+									if(Servidor.isConnected(amigo.getLog()))
 										conectado = "SI";
 									
-									out.println(amigo.darLog()+":"+conectado+":"+amigo.darFrase());
+									out.println(amigo.getLog()+":"+conectado+":"+amigo.getFrase());
 									
 									n--;
 								}
@@ -104,7 +104,7 @@ public class PeticionesPendientes extends Thread
 						}
 					}
 					
-					peticion = Servidor.siguientePeticionPendiente();
+					peticion = Servidor.nextPendingRequest();
 				}
 			}
 			catch(Exception e)

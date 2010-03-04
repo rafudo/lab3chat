@@ -58,7 +58,7 @@ public class Monitor extends Thread
 			}
 			catch(UnknownHostException x)
 			{
-				Servidor.desconectar(log);
+				Servidor.disconnect(log);
 				break;
 			}
 			catch(Exception e)

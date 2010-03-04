@@ -77,7 +77,7 @@ public class Servidor
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 
 		}
 		
@@ -104,12 +104,12 @@ public class Servidor
 	/**
 	 * Retorna el usuario identificado por el log parametro. Retorna null si no existe.
 	 */
-	public static Usuario darUsuario(String log)
+	public static Usuario getUsuario(String log)
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		System.out.println("busca " +log);
 		if(servidor.conectados.contains(new Usuario(log,"","")))
@@ -143,12 +143,12 @@ public class Servidor
 	/**
 	 * Retorna True si el Usuario esta conectado.
 	 */
-	public static boolean estaConectado(String log)
+	public static boolean isConnected(String log)
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
 		return servidor.conectados.contains(new Usuario(log, "", ""));
@@ -157,26 +157,26 @@ public class Servidor
 	/**
 	 * Agrega un Usuario a la lista de conectados.
 	 */
-	public static void agregarConectado(Usuario user)
+	public static void addConnected(Usuario user)
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
-		servidor.conectados.put(user.darLog(),user);
+		servidor.conectados.put(user.getLog(),user);
 	}
 	
 	/**
 	 * Retorna una instancia de esta clase.
 	 */
-	public static Servidor darInstancia()
+	public static Servidor getInstance()
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
 		return servidor;
@@ -185,7 +185,7 @@ public class Servidor
 	/**
 	 * Carga y crea el Servidor
 	 */
-	private void cargarServidor()
+	private void loadServer()
 	{
 		try
 		{
@@ -233,12 +233,12 @@ public class Servidor
 	/**
 	 * Remueve un Usuario de la lista de conectados.
 	 */
-	public static void desconectar(String log)
+	public static void disconnect(String log)
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
 		Usuario temp = new Usuario(log, "", "");
@@ -252,46 +252,46 @@ public class Servidor
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	public static void cambioPass(Usuario user, String nPass) throws FileNotFoundException, IOException
+	public static void changePass(Usuario user, String nPass) throws FileNotFoundException, IOException
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
-		user.cambiarPass(nPass);
-		servidor.info.setProperty(user.darLog()+PASS, nPass);
+		user.changePass(nPass);
+		servidor.info.setProperty(user.getLog()+PASS, nPass);
 		servidor.info.store(new FileOutputStream(INFO), null);
 	}
 	
 	/**
 	 * Cambia la frase de un usuario
 	 */
-	public static void cambioFrase(Usuario user, String nFrase)
+	public static void changeFrase(Usuario user, String nFrase)
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
-		user.cambiarFrase(nFrase);
-		servidor.info.setProperty(user.darLog()+FRASE, nFrase);
+		user.changeFrase(nFrase);
+		servidor.info.setProperty(user.getLog()+FRASE, nFrase);
 	}
 	
 	/**
 	 * Agrega un Usuario
 	 */
-	public static void agregarUsuario(Usuario user)
+	public static void addUser(Usuario user)
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
-		servidor.usuarios.add(user.darLog());
+		servidor.usuarios.add(user.getLog());
 		
 		File logs = new File(LOGS);
 		
@@ -320,16 +320,16 @@ public class Servidor
 			e.printStackTrace();
 		}
 		
-		servidor.info.setProperty(user.darLog()+PASS, user.darPass());
-		servidor.info.setProperty(user.darLog()+FRASE, user.darFrase());
+		servidor.info.setProperty(user.getLog()+PASS, user.getPass());
+		servidor.info.setProperty(user.getLog()+FRASE, user.getFrase());
 		
 		int n = user.amigos.size();
-		servidor.info.setProperty(user.darLog()+NAMIGOS, n+"");
+		servidor.info.setProperty(user.getLog()+NAMIGOS, n+"");
 		n--;
 		
 		while(n >= 0)
 		{
-			servidor.info.setProperty(user.darLog()+AMIGO+n, user.amigos.get(n));
+			servidor.info.setProperty(user.getLog()+AMIGO+n, user.amigos.get(n));
 			n--;
 		}
 	}
@@ -337,12 +337,12 @@ public class Servidor
 	/**
 	 * Agrega una peticion de amistad.
 	 */
-	public static void agregarPeticionAmistad(PeticionAmigo peticion)
+	public static void addFriendRequest(PeticionAmigo peticion)
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
 		servidor.peticionesAmistad.add(peticion);
@@ -351,12 +351,12 @@ public class Servidor
 	/**
 	 * Retorna una solicitud pendiente, null si no hay mas solicitudes pendientes.
 	 */
-	public static PeticionAmigo siguientePeticionPendiente()
+	public static PeticionAmigo nextPendingRequest()
 	{
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
 		if(servidor.peticionesAmistad.isEmpty())
@@ -368,27 +368,27 @@ public class Servidor
 	/**
 	 * Le agrega un amigo a un usuario.
 	 */
-	public static void agregarleUnAmigo(Usuario user, Usuario amigo)
+	public static void addFriendToUser(Usuario user, Usuario amigo)
 	{
-		user.amigos.add(amigo.darLog());
+		user.amigos.add(amigo.getLog());
 		
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
-		int n = Integer.parseInt(servidor.info.getProperty(user.darLog()+NAMIGOS));
-		servidor.info.setProperty(user.darLog()+AMIGO+n, amigo.darLog());
+		int n = Integer.parseInt(servidor.info.getProperty(user.getLog()+NAMIGOS));
+		servidor.info.setProperty(user.getLog()+AMIGO+n, amigo.getLog());
 		n++;
-		servidor.info.setProperty(user.darLog()+NAMIGOS, n+"");
+		servidor.info.setProperty(user.getLog()+NAMIGOS, n+"");
 	}
 
-	public static boolean existe(String login) {
+	public static boolean exist(String login) {
 		if(servidor == null)
 		{
 			servidor = new Servidor();
-			servidor.cargarServidor();
+			servidor.loadServer();
 		}
 		
 		return servidor.usuarios.contains(login);

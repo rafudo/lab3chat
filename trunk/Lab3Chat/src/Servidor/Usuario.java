@@ -63,7 +63,7 @@ public class Usuario
 	/**
 	 * Retorna el log.
 	 */
-	public String darLog()
+	public String getLog()
 	{
 		return log;
 	}
@@ -71,7 +71,7 @@ public class Usuario
 	/**
 	 * Retorna el pass.
 	 */
-	public String darPass()
+	public String getPass()
 	{
 		return pass;
 	}
@@ -79,7 +79,7 @@ public class Usuario
 	/**
 	 * Retorna la frase.
 	 */
-	public String darFrase()
+	public String getFrase()
 	{
 		return frase;
 	}
@@ -87,7 +87,7 @@ public class Usuario
 	/**
 	 * Retorna el IP
 	 */
-	public String darIP()
+	public String getIP()
 	{
 		return ip;
 	}
@@ -95,7 +95,7 @@ public class Usuario
 	/**
 	 * Modifica el pass
 	 */
-	public void cambiarPass(String nPass)
+	public void changePass(String nPass)
 	{
 		pass = nPass;
 	}
@@ -103,7 +103,7 @@ public class Usuario
 	/**
 	 * Modifica la frase
 	 */
-	public void cambiarFrase(String nFrase)
+	public void changeFrase(String nFrase)
 	{
 		frase = nFrase;
 	}
@@ -121,10 +121,10 @@ public class Usuario
 	 */
 	public boolean equals(Object arg0)
 	{
-		return log.equals(((Usuario)arg0).darLog());
+		return log.equals(((Usuario)arg0).getLog());
 	}
 
-	public int darPort() {		
+	public int getPort() {		
 		return port;
 	}
 

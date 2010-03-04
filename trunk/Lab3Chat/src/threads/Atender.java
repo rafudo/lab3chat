@@ -73,7 +73,7 @@ public class Atender extends Thread {
 			String login =(String)Stream.receiveObject(cliente);
 			String pss ="";
 			String confpss="";
-			if(!Servidor.existe(login)){
+			if(!Servidor.exist(login)){
 				Stream.sendObject(cliente, "OK");
 				 pss =(String)Stream.receiveObject(cliente);
 				 confpss =(String)Stream.receiveObject(cliente);
@@ -81,7 +81,7 @@ public class Atender extends Thread {
 					Stream.sendObject(cliente, "OK");
 					confpss =(String)Stream.receiveObject(cliente);
 					Usuario asd = new Usuario(login, pss, confpss);
-					Servidor.agregarUsuario(asd);
+					Servidor.addUser(asd);
 				}else{
 					Stream.sendObject(cliente, "ERROR");
 				}
@@ -102,28 +102,31 @@ public class Atender extends Thread {
 	 * En caso que el usuario desee hacer login
 	 */
 	private boolean login() throws Exception {
-		Usuario user = Servidor.darUsuario((String) Stream.receiveObject(cliente));
+		Usuario user = Servidor.getUsuario((String) Stream.receiveObject(cliente));
 
-		if (user!=null&&user.darPass().equals((String) Stream.receiveObject(cliente))) {
-			Stream.sendObject(cliente, user.darFrase());
+		if (user!=null&&user.getPass().equals((String) Stream.receiveObject(cliente))) {
+			Stream.sendObject(cliente, user.getFrase());
 
 			int n = user.amigos.size();
 			Stream.sendObject(cliente, ""+n);
 			n--;
 
 			while (n >= 0) {
-				Usuario amigo = Servidor.darUsuario(user.amigos.get(n));
+				Usuario amigo = Servidor.getUsuario(user.amigos.get(n));
 
 				String conectado = "NO";
 
-				if (Servidor.estaConectado(amigo.darLog()))
+				if (Servidor.isConnected(amigo.getLog()))
 					conectado = "SI";
-				Stream.sendObject(cliente, amigo.darLog());
+				Stream.sendObject(cliente, amigo.getLog());
 				Stream.sendObject(cliente, conectado);
-				Stream.sendObject(cliente, amigo.darFrase());
+				Stream.sendObject(cliente, amigo.getFrase());
 				if(conectado.equals("SI")){
-				Stream.sendObject(cliente,amigo.darIP());}
-				else Stream.sendObject(cliente, "0");
+				Stream.sendObject(cliente,amigo.getIP());
+				Stream.sendObject(cliente, amigo.getPort());
+				}
+				else {Stream.sendObject(cliente, "0");
+				Stream.sendObject(cliente, "0");}
 
 				n--;
 			}
@@ -133,9 +136,9 @@ public class Atender extends Thread {
 			user.setIP((String) Stream.receiveObject(cliente));
 			user.setPuerto(Integer.parseInt((String) Stream.receiveObject(cliente)) );
 
-			Servidor.agregarConectado(user);
+			Servidor.addConnected(user);
 
-			Monitor moni = new Monitor(user.darLog(), user.darIP(), user.darPort());
+			Monitor moni = new Monitor(user.getLog(), user.getIP(), user.getPort());
 			moni.start();
 			cliente.close();
 			return true;
@@ -152,8 +155,8 @@ public class Atender extends Thread {
 	 * @throws IOException 
 	 */
 	private void chao() throws IOException, ClassNotFoundException {
-		Usuario user = Servidor.darUsuario((String) Stream.receiveObject(cliente));
-		Servidor.desconectar(user.darLog());
+		Usuario user = Servidor.getUsuario((String) Stream.receiveObject(cliente));
+		Servidor.disconnect(user.getLog());
 		Stream.sendObject(cliente, "CHAO");
 		
 
@@ -161,9 +164,9 @@ public class Atender extends Thread {
 		n--;
 
 		while (n >= 0) {
-			if (Servidor.estaConectado(user.amigos.get(n))) {
-				Usuario amigo = Servidor.darUsuario(user.amigos.get(n));
-				Socket canal = new Socket(amigo.darIP(), 2010);
+			if (Servidor.isConnected(user.amigos.get(n))) {
+				Usuario amigo = Servidor.getUsuario(user.amigos.get(n));
+				Socket canal = new Socket(amigo.getIP(), 2010);
 				
 
 				int m = amigo.amigos.size();
@@ -173,16 +176,16 @@ public class Atender extends Thread {
 				m--;
 
 				while (m >= 0) {
-					Usuario amigoAmigo = Servidor.darUsuario(amigo.amigos
+					Usuario amigoAmigo = Servidor.getUsuario(amigo.amigos
 							.get(m));
 
 					String conectado = "NO";
 
-					if (Servidor.estaConectado(amigoAmigo.darLog()))
+					if (Servidor.isConnected(amigoAmigo.getLog()))
 						conectado = "SI";
-					Stream.sendObject(canal,amigoAmigo.darLog());
+					Stream.sendObject(canal,amigoAmigo.getLog());
 					Stream.sendObject(canal,conectado);
-					Stream.sendObject(canal,amigoAmigo.darFrase());
+					Stream.sendObject(canal,amigoAmigo.getFrase());
 					
 
 					m--;
@@ -201,11 +204,11 @@ public class Atender extends Thread {
 	 * PASS:<LOG>:<PASSACTUAL>:<NUEVAPASS>:<CONF>
 	 */
 	private void pass() throws Exception {
-		Usuario user = Servidor.darUsuario((String)Stream.receiveObject(cliente));
+		Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
 		String ps;
-		if (((String)Stream.receiveObject(cliente)).equals(user.darPass())
+		if (((String)Stream.receiveObject(cliente)).equals(user.getPass())
 				&& (ps=(String)Stream.receiveObject(cliente)).equals(((String)Stream.receiveObject(cliente)))) {
-			try{Servidor.cambioPass(user,ps);
+			try{Servidor.changePass(user,ps);
 			}catch(Exception e){
 				Stream.sendObject(cliente, "ERROR");
 			}
@@ -224,9 +227,9 @@ public class Atender extends Thread {
 	 */
 	private void frase() throws IOException, ClassNotFoundException
 			 {
-		Usuario user = Servidor.darUsuario((String)Stream.receiveObject(cliente));
-		if(user.darPass().equals((String)Stream.receiveObject(cliente)))
-		Servidor.cambioFrase(user, (String)Stream.receiveObject(cliente));
+		Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
+		if(user.getPass().equals((String)Stream.receiveObject(cliente)))
+		Servidor.changeFrase(user, (String)Stream.receiveObject(cliente));
 		Stream.sendObject(cliente, "OK");
 	}
 
@@ -237,10 +240,10 @@ public class Atender extends Thread {
 	 */
 	private void solicitud(String[] partesMensaje, PrintWriter out)
 			throws Exception {
-		if (Servidor.darUsuario(partesMensaje[1]) != null) {
+		if (Servidor.getUsuario(partesMensaje[1]) != null) {
 			PeticionAmigo temp = new PeticionAmigo(partesMensaje[2],
 					partesMensaje[1]);
-			Servidor.agregarPeticionAmistad(temp);
+			Servidor.addFriendRequest(temp);
 			out.println("OK");
 		} else
 			out.println("ERROR");
