@@ -51,10 +51,7 @@ public class Atender extends Thread {
 			else if (line.equals("FRASE")) {
 				frase();
 			}
-
-			else if (line.equals("CHARLA")) {
-				charla(null, null);
-			} else if (line.equals("AMIGO")) {
+			 else if (line.equals("AMIGO")) {
 				solicitud(null, null);
 			}else if(line.equals("NEW")){
 				newAccount();
@@ -131,7 +128,6 @@ public class Atender extends Thread {
 				n--;
 			}
 
-			// TODO Grupo Pendiente
 			Stream.sendObject(cliente, "0");
 
 			user.setIP((String) Stream.receiveObject(cliente));
@@ -141,10 +137,11 @@ public class Atender extends Thread {
 
 			Monitor moni = new Monitor(user.darLog(), user.darIP(), user.darPort());
 			moni.start();
-
+			cliente.close();
 			return true;
 		} else {
 			Stream.sendObject(cliente, "ERROR");
+			cliente.close();
 			return false;
 		}
 	}
@@ -233,18 +230,7 @@ public class Atender extends Thread {
 		Stream.sendObject(cliente, "OK");
 	}
 
-	/**
-	 * En caso que desee conversar con un amigo.
-	 */
-	private void charla(String[] partesMensaje, PrintWriter out)
-			throws Exception {
-		Usuario user = Servidor.darUsuario(partesMensaje[1]);
-
-		if (Servidor.estaConectado(user.darLog()))
-			out.println(user.darIP() + ":" + 2010);
-		else
-			out.println("ERROR");
-	}
+	
 
 	/**
 	 * En caso que desee realizar una solicitud de amistad.
