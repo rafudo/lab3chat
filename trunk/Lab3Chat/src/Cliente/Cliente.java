@@ -8,7 +8,6 @@ import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Vector;
 
-import conectividad.InputListener;
 import conectividad.Stream;
 
 public class Cliente extends Observable{
@@ -34,10 +33,14 @@ public class Cliente extends Observable{
 			Socket s = new Socket("localhost", 2245);
 			Stream.sendObject(s, "CHAO");
 			Stream.sendObject(s, username);
+			Stream.receiveObject(s);
 		} catch (UnknownHostException e) {
 
 		} catch (IOException e) {
 
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -74,7 +77,7 @@ public class Cliente extends Observable{
 				String con = (String) Stream.receiveObject(s);
 				String frasec = (String) Stream.receiveObject(s);
 				String ips = (String) Stream.receiveObject(s);
-				int porto = Integer.parseInt((String) Stream.receiveObject(s));
+				int porto = (Integer) Stream.receiveObject(s);
 				contactos.add(Contacto.crearContacto(log, ips, frasec, con, porto));
 			}
 			line = (String) Stream.receiveObject(s);
