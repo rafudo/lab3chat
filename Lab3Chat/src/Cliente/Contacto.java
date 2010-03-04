@@ -55,7 +55,7 @@ public class Contacto{
 	
 	public static Contacto crearContacto(String log, String ips, String frase, String con, int porto){
 		boolean connected  = con.equals("SI");		
-		System.out.println(ips);
+		System.out.println(ips+" / "+log+" / "+frase+" / "+con+" / "+porto);
 		return new Contacto(log,frase,ips, connected, porto);
 		
 	}

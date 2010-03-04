@@ -56,7 +56,7 @@ public class Atender extends Thread {
 			}else if(line.equals("NEW")){
 				newAccount();
 			}
-			// TODO Grupo
+		
 
 			cliente.close();
 		} catch (Exception e) {
@@ -88,6 +88,7 @@ public class Atender extends Thread {
 			}else{
 				Stream.sendObject(cliente, "ERROR");
 			}
+			
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -109,10 +110,10 @@ public class Atender extends Thread {
 
 			int n = user.amigos.size();
 			Stream.sendObject(cliente, ""+n);
-			n--;
+			
 
-			while (n >= 0) {
-				Usuario amigo = Servidor.getUsuario(user.amigos.get(n));
+			for(int i=0;i<n;i++){
+				Usuario amigo = Servidor.getUsuario(user.amigos.get(i));
 
 				String conectado = "NO";
 
@@ -123,12 +124,12 @@ public class Atender extends Thread {
 				Stream.sendObject(cliente, amigo.getFrase());
 				if(conectado.equals("SI")){
 				Stream.sendObject(cliente,amigo.getIP());
-				Stream.sendObject(cliente, amigo.getPort());
+				Stream.sendObject(cliente,amigo.getPort());
 				}
 				else {Stream.sendObject(cliente, "0");
-				Stream.sendObject(cliente, "0");}
+				Stream.sendObject(cliente, 0);}
 
-				n--;
+				
 			}
 
 			Stream.sendObject(cliente, "0");
@@ -137,14 +138,17 @@ public class Atender extends Thread {
 			user.setPuerto(Integer.parseInt((String) Stream.receiveObject(cliente)) );
 
 			Servidor.addConnected(user);
-
+			for(int i=0;i<user.amigos.size();i++)
+			{
+				
+			}
 			Monitor moni = new Monitor(user.getLog(), user.getIP(), user.getPort());
 			moni.start();
-			cliente.close();
+			
 			return true;
 		} else {
 			Stream.sendObject(cliente, "ERROR");
-			cliente.close();
+		
 			return false;
 		}
 	}
