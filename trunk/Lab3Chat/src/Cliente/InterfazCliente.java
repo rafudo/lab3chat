@@ -33,6 +33,7 @@ public class InterfazCliente extends JFrame {
 	@Override
 	public void dispose() {
 		try {
+			if(cliente!=null)
 			cliente.disconnect();
 			
 		} catch (Exception e) {
