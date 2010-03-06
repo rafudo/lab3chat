@@ -22,6 +22,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
+import texto.Txt;
+
 public class ConnectedPane extends JTabbedPane implements Observer{
 
 	/**
@@ -65,6 +67,7 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 			}
 		});
 		lstContactos.setCellRenderer(new ContactsRenderer());
+		Txt.msg("Si agrega el observador");
 		interfaz.getCliente().addObserver(this);
 		lstContactos.setListData(interfaz.getCliente().getContacts().values().toArray());
 		JScrollPane sp = new JScrollPane();
@@ -76,8 +79,8 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 
 	@Override
 	public void update(Observable arg0, Object lista) {
-		
-		lstContactos.setListData(interfaz.getCliente().getContacts().values().toArray());
+		Txt.msg("HP VIDA SI ACTUALIZA");
+		lstContactos.setListData((Object[]) lista);
 		
 	}
 

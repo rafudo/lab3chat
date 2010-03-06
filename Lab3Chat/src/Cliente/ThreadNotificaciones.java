@@ -3,7 +3,7 @@ package Cliente;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Hashtable;
-import java.util.Vector;
+
 
 import conectividad.Stream;
 
@@ -50,6 +50,7 @@ public class ThreadNotificaciones extends Thread{
 		try {
 			line = (String) Stream.receiveObject(in);
 			int n = Integer.parseInt(line);
+			System.out.println("Lista Contactos");
 			for (int i = 0; i < n; i++) {
 				String log = (String) Stream.receiveObject(in);
 				String con = (String) Stream.receiveObject(in);
@@ -58,6 +59,8 @@ public class ThreadNotificaciones extends Thread{
 				int porto = (Integer) Stream.receiveObject(in);
 				contactos.put(log,Contacto.crearContacto(log, ips, frasec, con, porto));
 			}
+	
+			me.notifyObservers(contactos.values().toArray());
 
 		} catch (IOException e) {
 
