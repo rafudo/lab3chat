@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import conectividad.InputListener;
+import conectividad.Stream;
 
 
 
@@ -12,7 +13,9 @@ public class Contacto implements InputListener{
 	private String username;
 	private String ip;
 	private int port;
-	private Thread in;
+	private Thread reader;
+
+	private Socket in;
 	private Socket out;
 	private DiagChat chat;
 
@@ -65,7 +68,12 @@ public class Contacto implements InputListener{
 
 	public void assingIn(Socket ini) {
 		
-		
+		if (reader ==null || !reader.isAlive()){			
+			in=ini;
+			reader=Stream.listenSocket(in, this);
+			reader.start();
+			System.gc();
+		}
 		
 	}
 
@@ -79,10 +87,23 @@ public class Contacto implements InputListener{
 		}
 		
 	}
+	
+	public void sendMsg(String username,String msg){
+		try {
+			if(out==null){
+				out =  new Socket(ip,port);
+				Stream.sendObject(out, "CHARLA");
+				Stream.sendObject(out, username);
+			}
+			Stream.sendObject(out, "C"+msg);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
-	public void update(Object arg0) {
-		// TODO Auto-generated method stub
+	public void update(Object o) {
+		
 		
 	}
 
