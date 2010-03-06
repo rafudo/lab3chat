@@ -5,20 +5,21 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Hashtable;
 import java.util.Observable;
 import java.util.Vector;
 
 import conectividad.Stream;
 
 public class Cliente extends Observable{
-	private Vector<Contacto> contactos;
+	private Hashtable<String,Contacto> contactos;
 	private Vector<Grupo> grupos;
 	private String frase;
 	private String username;
 	private String password;
 	private int port;
 private ThreadEscucha escucha;
-	private Cliente(String username, String password,Vector<Contacto> contacts, Vector<Grupo> grupos,
+	private Cliente(String username, String password,Hashtable<String,Contacto> contacts, Vector<Grupo> grupos,
 			String frase, int port)  {
 		this.username=username;
 		contactos = contacts;
@@ -38,11 +39,11 @@ private ThreadEscucha escucha;
 			Stream.receiveObject(s);
 		
 		} catch (UnknownHostException e) {
-
+			e.printStackTrace();
 		} catch (IOException e) {
-
+			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
@@ -53,14 +54,14 @@ private ThreadEscucha escucha;
 		return true;
 	}
 
-	public Vector<Contacto> getContacts() {
+	public Hashtable<String,Contacto> getContacts() {
 
 		return contactos;
 	}
 
 	public static Cliente createClient(String username, String password) throws UnknownHostException,
 			IOException, ClassNotFoundException {
-		Vector<Contacto> contactos = new Vector<Contacto>();
+		Hashtable<String,Contacto> contactos = new Hashtable<String,Contacto>();
 		Vector<Grupo> grupos = new Vector<Grupo>();
 		String frase = "";
 	
@@ -81,7 +82,7 @@ private ThreadEscucha escucha;
 				String frasec = (String) Stream.receiveObject(s);
 				String ips = (String) Stream.receiveObject(s);
 				int porto = (Integer) Stream.receiveObject(s);
-				contactos.add(Contacto.crearContacto(log, ips, frasec, con, porto));
+				contactos.put(log,Contacto.crearContacto(log, ips, frasec, con, porto));
 			}
 			line = (String) Stream.receiveObject(s);
 			n = Integer.parseInt(line);
