@@ -67,7 +67,7 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 			}
 		});
 		lstContactos.setCellRenderer(new ContactsRenderer());
-		Txt.msg("Si agrega el observador");
+
 		interfaz.getCliente().addObserver(this);
 		lstContactos.setListData(interfaz.getCliente().getContacts().values().toArray());
 		JScrollPane sp = new JScrollPane();

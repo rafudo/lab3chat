@@ -105,8 +105,9 @@ public class Atender extends Thread {
 	private boolean login() throws Exception {
 		Usuario user = Servidor.getUsuario((String) Stream.receiveObject(cliente));
 
-		if (user!=null&&user.getPass().equals((String) Stream.receiveObject(cliente))) {
+		if (user!=null&&!Servidor.isConnected(user.getLog())&&user.getPass().equals((String) Stream.receiveObject(cliente))) {
 	
+			
 			Stream.sendObject(cliente, user.getFrase());
 
 			int n = user.amigos.size();
@@ -165,42 +166,11 @@ public class Atender extends Thread {
 		Stream.sendObject(cliente, "CHAO");
 		
 
-		int n = user.amigos.size();
-		n--;
-
-		while (n >= 0) {
-			if (Servidor.isConnected(user.amigos.get(n))) {
-				Usuario amigo = Servidor.getUsuario(user.amigos.get(n));
-				Socket canal = new Socket(amigo.getIP(), 2010);
-				
-
-				int m = amigo.amigos.size();
-				Stream.sendObject(canal, "NUEVALISTA");
-				Stream.sendObject(canal, m);
-				
-				m--;
-
-				while (m >= 0) {
-					Usuario amigoAmigo = Servidor.getUsuario(amigo.amigos
-							.get(m));
-
-					String conectado = "NO";
-
-					if (Servidor.isConnected(amigoAmigo.getLog()))
-						conectado = "SI";
-					Stream.sendObject(canal,amigoAmigo.getLog());
-					Stream.sendObject(canal,conectado);
-					Stream.sendObject(canal,amigoAmigo.getFrase());
-					
-
-					m--;
-				}
-
-				canal.close();
-			}
-
-			n--;
+		for(int i=0;i<user.amigos.size();i++)
+		{
+			(new FriendStatusChanged(user.amigos.get(i),user)).start();
 		}
+		
 
 	}
 

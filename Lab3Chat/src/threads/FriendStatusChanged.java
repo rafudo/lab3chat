@@ -22,7 +22,7 @@ public class FriendStatusChanged extends Thread {
 			try {
 				Usuario user = Servidor.getUsuario(destiny);
 				Socket cliente = new Socket(user.getIP(), user.getPort());
-				Stream.sendObject(cliente, "NUEVALISTA");
+				Stream.sendObject(cliente, "CAMBIO");
 
 				String conectado = "NO";
 
