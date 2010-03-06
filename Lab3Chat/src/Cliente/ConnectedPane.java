@@ -22,7 +22,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
-import texto.Txt;
 
 public class ConnectedPane extends JTabbedPane implements Observer{
 
@@ -33,24 +32,26 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 	private JPanel panelContactos;
 	private JList lstContactos;
 	private InterfazCliente interfaz;
+	private final Cliente cliente;
 	private JLabel usernameLab;
 	private JTextField nickLab;
 
-	public ConnectedPane(InterfazCliente interfazCliente) {
+	public ConnectedPane(InterfazCliente interfazCliente, Cliente client) {
 		interfaz = interfazCliente;
+		this.cliente=client;
 		panelContactos = new JPanel();
 		panelContactos.setLayout(new BorderLayout());
-		usernameLab = new JLabel(interfaz.getCliente().getUsername());
+		usernameLab = new JLabel(cliente.getUsername());
 		usernameLab.setFont(new Font("Arial", Font.BOLD, 20));
 		JPanel panelNorte = new JPanel();
 		panelNorte.setLayout(new FlowLayout());
-		nickLab = new JTextField(interfaz.getCliente().getFrase());
+		nickLab = new JTextField(cliente.getFrase());
 		nickLab.setFont(new Font("Arial", Font.ITALIC, 10));
 		nickLab.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				interfaz.getCliente().cambiarFrase(nickLab.getText());
+				cliente.cambiarFrase(nickLab.getText());
 				
 			}
 		});
@@ -62,14 +63,15 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==2){
 					int index=lstContactos.locationToIndex(e.getPoint());
-					System.out.println(lstContactos.getModel().getElementAt(index).getClass());
+					Contacto c= (Contacto) lstContactos.getModel().getElementAt(index);
+										
 				}
 			}
 		});
 		lstContactos.setCellRenderer(new ContactsRenderer());
 
-		interfaz.getCliente().addObserver(this);
-		lstContactos.setListData(interfaz.getCliente().getContacts().values().toArray());
+		cliente.addObserver(this);
+		lstContactos.setListData(cliente.getContacts().values().toArray());
 		JScrollPane sp = new JScrollPane();
 		sp.setViewportView(lstContactos);
 		panelContactos.add(sp, BorderLayout.CENTER);
@@ -83,6 +85,12 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 		
 		System.out.println(((Object[]) lista).length);
 		lstContactos.setListData((Object[]) lista);
+		
+	}
+
+	public void disconnect() {
+		if(cliente!=null)
+            cliente.disconnect();
 		
 	}
 

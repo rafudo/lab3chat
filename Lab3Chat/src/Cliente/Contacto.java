@@ -107,6 +107,15 @@ public class Contacto implements InputListener{
 		
 	}
 
+	public void setWindow(DiagChat diagChat) {
+		chat= diagChat;
+		
+	}
+	public DiagChat getWindow() {
+		return chat;
+		
+	}
+
 	
 
 }
