@@ -1,9 +1,5 @@
 package Cliente;
 
-import java.net.Socket;
-
-import conectividad.InputListener;
-
 
 
 public class Contacto{
