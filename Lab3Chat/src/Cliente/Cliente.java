@@ -32,6 +32,7 @@ private ThreadEscucha escucha;
 	}
 
 	public void disconnect() {
+		
 		try {
 			Socket s = new Socket("localhost", 2245);
 			Stream.sendObject(s, "CHAO");
@@ -127,6 +128,19 @@ private ThreadEscucha escucha;
 
 	public int darPort() {
 		return port;
+	}
+
+	public void setContacts(Hashtable<String, Contacto> contactos2) {
+		
+	}
+
+	public void modifyList(Contacto c) {
+		setChanged();
+		contactos.remove(c.getUsername());
+		contactos.put(c.getUsername(),c);
+		notifyObservers(contactos.values().toArray());
+		clearChanged();
+		
 	}
 
 	

@@ -44,23 +44,15 @@ public class ThreadNotificaciones extends Thread{
 
 	private void newFriendList() {
 		System.out.println("Estoy recibiendolas");
-		Hashtable<String,Contacto> contactos=me.getContacts();
-		contactos.clear();
-		String line;
-		try {
-			line = (String) Stream.receiveObject(in);
-			int n = Integer.parseInt(line);
-			System.out.println("Lista Contactos");
-			for (int i = 0; i < n; i++) {
+	
+		try {			
 				String log = (String) Stream.receiveObject(in);
 				String con = (String) Stream.receiveObject(in);
 				String frasec = (String) Stream.receiveObject(in);
 				String ips = (String) Stream.receiveObject(in);
 				int porto = (Integer) Stream.receiveObject(in);
-				contactos.put(log,Contacto.crearContacto(log, ips, frasec, con, porto));
-			}
-	
-			me.notifyObservers(contactos.values().toArray());
+				Contacto c=Contacto.crearContacto(log, ips, frasec, con, porto);			
+			me.modifyList(c);			
 
 		} catch (IOException e) {
 
