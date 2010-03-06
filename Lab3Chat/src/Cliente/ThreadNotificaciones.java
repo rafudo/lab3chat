@@ -42,8 +42,9 @@ public class ThreadNotificaciones extends Thread{
 
 
 	private void newFriendList() {
+		System.out.println("Estoy recibiendolas");
 		Vector<Contacto> contactos=me.getContacts();
-		contactos.clear()		;
+		contactos.clear();
 		String line;
 		try {
 			line = (String) Stream.receiveObject(in);
@@ -56,7 +57,7 @@ public class ThreadNotificaciones extends Thread{
 				int porto = (Integer) Stream.receiveObject(in);
 				contactos.add(Contacto.crearContacto(log, ips, frasec, con, porto));
 			}
-			line = (String) Stream.receiveObject(in);
+
 		} catch (IOException e) {
 
 			e.printStackTrace();

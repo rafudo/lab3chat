@@ -16,11 +16,13 @@ public class NewFriendList extends Thread {
 
 	public void run() {
 		if (Servidor.isConnected(log)) {
+			System.out.println("Esta enviando las notificaciones");
 			try {
 				Usuario user = Servidor.getUsuario(log);
 				Socket cliente = new Socket(user.getIP(), user.getPort());
 
 				int n = user.amigos.size();
+				Stream.sendObject(cliente, "NUEVALISTA");
 				Stream.sendObject(cliente, "" + n);
 
 				for (int i = 0; i < n; i++) {
@@ -42,6 +44,7 @@ public class NewFriendList extends Thread {
 					}
 
 				}
+				cliente.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
