@@ -5,6 +5,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 
@@ -48,12 +50,29 @@ public class LoginPane extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(btnConnect)) {
-			interfazCliente.connect(txtLogin.getText(),new String(txtPass.getPassword()));
-			if (interfazCliente.getCliente()!=null) {
-				interfazCliente.connectedScreen();
+			Cliente cliente=connect(txtLogin.getText(),new String(txtPass.getPassword()));
+			if (cliente!=null) {
+				interfazCliente.connectedScreen(cliente);
 			}
 		}
 
+	}
+	
+	public Cliente connect(String username, String password) {
+		try {
+			return Cliente.createClient(username,password);
+		} catch (UnknownHostException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 
 }

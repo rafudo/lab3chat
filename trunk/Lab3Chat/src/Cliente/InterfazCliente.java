@@ -2,6 +2,7 @@ package Cliente;
 
 
 
+import java.awt.Component;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
@@ -12,7 +13,7 @@ import javax.swing.JFrame;
 
 public class InterfazCliente extends JFrame {
 
-	private Cliente cliente;
+	
 
 
 	public InterfazCliente() {
@@ -33,8 +34,9 @@ public class InterfazCliente extends JFrame {
 	@Override
 	public void dispose() {
 		try {
-			if(cliente!=null)
-			cliente.disconnect();
+			Component c = getContentPane().getComponent(0);
+			if(c instanceof ConnectedPane)
+			((ConnectedPane)c).disconnect();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -53,33 +55,16 @@ public class InterfazCliente extends JFrame {
 
 	}
 
-	public Cliente getCliente() {
+	
 
-		return cliente;
-	}
-
-	public void connectedScreen() {
+	public void connectedScreen(Cliente cliente) {
 		getContentPane().removeAll();
-		add(new ConnectedPane(this));
+		add(new ConnectedPane(this,cliente));
 		paintAll(getGraphics())	;
 		
 		
 	}
 
-	public void connect(String username, String password) {
-		try {
-			cliente = Cliente.createClient(username,password);
-		} catch (UnknownHostException e) {
-
-			e.printStackTrace();
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-
-			e.printStackTrace();
-		}
-		
-	}
+	
 
 }
