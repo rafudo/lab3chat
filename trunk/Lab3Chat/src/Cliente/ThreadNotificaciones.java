@@ -2,6 +2,7 @@ package Cliente;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import conectividad.Stream;
@@ -43,7 +44,7 @@ public class ThreadNotificaciones extends Thread{
 
 	private void newFriendList() {
 		System.out.println("Estoy recibiendolas");
-		Vector<Contacto> contactos=me.getContacts();
+		Hashtable<String,Contacto> contactos=me.getContacts();
 		contactos.clear();
 		String line;
 		try {
@@ -55,7 +56,7 @@ public class ThreadNotificaciones extends Thread{
 				String frasec = (String) Stream.receiveObject(in);
 				String ips = (String) Stream.receiveObject(in);
 				int porto = (Integer) Stream.receiveObject(in);
-				contactos.add(Contacto.crearContacto(log, ips, frasec, con, porto));
+				contactos.put(log,Contacto.crearContacto(log, ips, frasec, con, porto));
 			}
 
 		} catch (IOException e) {

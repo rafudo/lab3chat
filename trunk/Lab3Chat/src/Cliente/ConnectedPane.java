@@ -66,7 +66,7 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 		});
 		lstContactos.setCellRenderer(new ContactsRenderer());
 		interfaz.getCliente().addObserver(this);
-		lstContactos.setListData(interfaz.getCliente().getContacts());
+		lstContactos.setListData(interfaz.getCliente().getContacts().values().toArray());
 		JScrollPane sp = new JScrollPane();
 		sp.setViewportView(lstContactos);
 		panelContactos.add(sp, BorderLayout.CENTER);
@@ -77,7 +77,7 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 	@Override
 	public void update(Observable arg0, Object lista) {
 		
-		lstContactos.setListData(interfaz.getCliente().getContacts());
+		lstContactos.setListData(interfaz.getCliente().getContacts().values().toArray());
 		
 	}
 
