@@ -17,7 +17,7 @@ public class Cliente extends Observable{
 	private String username;
 	private String password;
 	private int port;
-
+private ThreadEscucha escucha;
 	private Cliente(String username, String password,Vector<Contacto> contacts, Vector<Grupo> grupos,
 			String frase, int port)  {
 		this.username=username;
@@ -26,6 +26,8 @@ public class Cliente extends Observable{
 		this.frase = frase;
 		this.grupos=grupos;
 		this.port=port;
+		escucha=new ThreadEscucha(this);
+		escucha.start();
 	}
 
 	public void disconnect() {
@@ -34,6 +36,7 @@ public class Cliente extends Observable{
 			Stream.sendObject(s, "CHAO");
 			Stream.sendObject(s, username);
 			Stream.receiveObject(s);
+		
 		} catch (UnknownHostException e) {
 
 		} catch (IOException e) {

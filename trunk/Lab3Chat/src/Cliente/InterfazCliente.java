@@ -34,9 +34,12 @@ public class InterfazCliente extends JFrame {
 	public void dispose() {
 		try {
 			cliente.disconnect();
+			
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		super.dispose();
+		System.exit(0);
 	}
 
 	/**
