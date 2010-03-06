@@ -79,7 +79,9 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 
 	@Override
 	public void update(Observable arg0, Object lista) {
-		Txt.msg("HP VIDA SI ACTUALIZA");
+		
+		
+		System.out.println(((Object[]) lista).length);
 		lstContactos.setListData((Object[]) lista);
 		
 	}
