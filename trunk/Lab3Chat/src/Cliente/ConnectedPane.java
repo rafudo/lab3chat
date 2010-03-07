@@ -16,14 +16,17 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
-
-public class ConnectedPane extends JTabbedPane implements Observer{
+public class ConnectedPane extends JTabbedPane implements Observer,
+		ActionListener {
 
 	/**
 	 * 
@@ -35,38 +38,41 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 	private Cliente cliente;
 	private JLabel usernameLab;
 	private JTextField nickLab;
-
+	private JMenuItem itmCerrar;
 	public ConnectedPane(InterfazCliente interfazCliente, Cliente client) {
 		interfaz = interfazCliente;
-		this.cliente=client;
+		
+		JMenu menuSesion = new JMenu("Sesión");
+		menuSesion.addSeparator();
+		itmCerrar = new JMenuItem("Cerrar sesión");
+		itmCerrar.addActionListener(this);
+		menuSesion.add(itmCerrar);
+		interfaz.getJMenuBar().removeAll();
+		interfaz.getJMenuBar().add(menuSesion);
+		this.cliente = client;
 		panelContactos = new JPanel();
 		panelContactos.setLayout(new BorderLayout());
 		usernameLab = new JLabel(cliente.getUsername());
 		usernameLab.setFont(new Font("Arial", Font.BOLD, 20));
 		JPanel panelNorte = new JPanel();
-		panelNorte.setLayout(new FlowLayout());
+		panelNorte.setLayout(new BorderLayout());
+		panelNorte.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
 		nickLab = new JTextField(cliente.getFrase());
 		nickLab.setFont(new Font("Arial", Font.ITALIC, 10));
-		nickLab.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cliente.cambiarFrase(nickLab.getText());
-				
-			}
-		});
-		panelNorte.add(usernameLab);
-		panelNorte.add(nickLab);
+		nickLab.addActionListener(this);
+		panelNorte.add(usernameLab,BorderLayout.CENTER);
+		panelNorte.add(nickLab,BorderLayout.SOUTH);
 		addTab("Contactos", panelContactos);
 		lstContactos = new JList();
-		lstContactos.addMouseListener(new MouseAdapter(){
+		lstContactos.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount()==2){
-					int index=lstContactos.locationToIndex(e.getPoint());
-					Contacto c= (Contacto) lstContactos.getModel().getElementAt(index);
-					
+				if (e.getClickCount() == 2) {
+					int index = lstContactos.locationToIndex(e.getPoint());
+					Contacto c = (Contacto) lstContactos.getModel()
+							.getElementAt(index);
+
 					c.openWindow();
-				
+
 				}
 			}
 		});
@@ -78,25 +84,34 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 		sp.setViewportView(lstContactos);
 		panelContactos.add(sp, BorderLayout.CENTER);
 		panelContactos.add(panelNorte, BorderLayout.NORTH);
+		
 
 	}
 
 	@Override
 	public void update(Observable arg0, Object lista) {
-		
-		
+
 		System.out.println(((Object[]) lista).length);
 		lstContactos.setListData((Object[]) lista);
-		
+
 	}
 
 	public void disconnect() {
-		if(cliente!=null)
-            cliente.disconnect();
-		
+		if (cliente != null)
+			cliente.disconnect();
+
 	}
 
-	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource().equals(nickLab))
+			cliente.cambiarFrase(nickLab.getText());
+		else if(e.getSource().equals(itmCerrar)){
+			cliente.disconnect();
+			interfaz.loginScreen();
+		}
+
+	}
 
 }
 

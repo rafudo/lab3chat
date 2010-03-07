@@ -446,6 +446,6 @@ public class Servidor {
 			servidor.loadServer();
 		}
 		File f = new File(LOGS + login);
-		return f.exists();
+		return f.exists()&&!login.equals("");
 	}
 }
