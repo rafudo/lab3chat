@@ -40,8 +40,7 @@ public class ThreadNotificaciones extends Thread {
 
 	private void assignChat() {
 		try {
-			System.out.println(me);
-			System.out.println(me.getContacts());
+		
 			Contacto c=me.getContacts().get((String) Stream.receiveObject(in));
 			c.assingIn(in);
 		} catch (IOException e) {
