@@ -81,7 +81,7 @@ public class Contacto implements InputListener{
 	public void disconnected(Socket s, Throwable e) {
 		try {
 			s.close();
-			e.printStackTrace();
+			System.out.println("socket cerrado con normalidad");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -90,7 +90,7 @@ public class Contacto implements InputListener{
 	
 	public boolean sendMsg(String msg){
 		try {
-			if(out==null){
+			if(out==null || out.isClosed()){
 				out =  new Socket(ip,port);
 				Stream.sendObject(out, "CHARLA");
 				Stream.sendObject(out, System.getProperty("username"));
@@ -124,7 +124,20 @@ public class Contacto implements InputListener{
 	}
 
 	public void close() {
-		
+	
+		try {
+			if(out!=null)
+			out.close();
+			} catch (IOException e) {			
+			System.out.println("cambiar por e.printstacjtrac");
+		}
+	}
+
+	public void openWindow() {
+		if(chat==null){
+			chat=new DiagChat(this);
+			chat.setVisible(true);
+		}
 		
 	}
 
