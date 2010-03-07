@@ -91,8 +91,9 @@ public class Cliente extends Observable{
 			line = (String) Stream.receiveObject(s);
 			n = Integer.parseInt(line);
 			
-			for (int i = 0; i < n; i++) {
-				
+			for (int i = 0; i < n; i++) 
+			{
+				grupos.add((Grupo)Stream.receiveObject(s));
 			}
 			int port=Stream.findFreePort(1000,2000);
 			try
