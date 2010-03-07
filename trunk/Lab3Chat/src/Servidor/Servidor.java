@@ -427,6 +427,8 @@ public class Servidor {
 		
 		g = servidor.grupos.get(servidor.grupos.indexOf(g));
 		g.remover(user.getLog());
+		user.removeGrupo(g);
+		changeFrase(user, user.getFrase());
 		
 		try
 		{	
