@@ -450,4 +450,18 @@ public class Servidor {
 		File f = new File(LOGS + login);
 		return f.exists()&&!login.equals("");
 	}
+	
+	/**
+	 * Elimina un grupo
+	 */
+	public static void removerGrupo(Grupo g)
+	{
+		if (servidor == null) 
+		{
+			servidor = new Servidor();
+			servidor.loadServer();
+		}
+		
+		servidor.grupos.remove(g);
+	}
 }
