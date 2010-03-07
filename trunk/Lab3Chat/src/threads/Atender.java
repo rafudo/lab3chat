@@ -159,7 +159,7 @@ public class Atender extends Thread {
 					.receiveObject(cliente)));
 
 			Servidor.addConnected(user);
-			
+
 			for (int i = 0; i < user.amigos.size(); i++) {
 				(new FriendStatusChanged(user.amigos.get(i), user)).start();
 			}
@@ -199,10 +199,8 @@ public class Atender extends Thread {
 	private void pass() throws Exception {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		String ps;
-		if (((String) Stream.receiveObject(cliente)).equals(user.getPass())
-				&& (ps = (String) Stream.receiveObject(cliente))
-						.equals(((String) Stream.receiveObject(cliente)))) {
+		String ps = (String) Stream.receiveObject(cliente);
+		if (((String) Stream.receiveObject(cliente)).equals(user.getPass())) {
 			try {
 				Servidor.changePass(user, ps);
 			} catch (Exception e) {
@@ -224,10 +222,13 @@ public class Atender extends Thread {
 	private void frase() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		if (user!=null&&user.getPass().equals((String) Stream.receiveObject(cliente)))
+		if (user != null
+				&& user.getPass()
+						.equals((String) Stream.receiveObject(cliente))) {
 			Servidor.changeFrase(user, (String) Stream.receiveObject(cliente));
-		Stream.sendObject(cliente, "OK");
-		
+			Stream.sendObject(cliente, "OK");
+		} else
+			Stream.sendObject(cliente, "ERROR");
 		for (int i = 0; i < user.amigos.size(); i++) {
 			(new FriendStatusChanged(user.amigos.get(i), user)).start();
 		}
@@ -325,28 +326,26 @@ public class Atender extends Thread {
 				.receiveObject(cliente));
 		Grupo g = (Grupo) Stream.receiveObject(cliente);
 
-		if(g.getOwner().equals(user.getLog()))
-		{
-			for(String inscrito: g.darGente())
-			{
+		if (g.getOwner().equals(user.getLog())) {
+			for (String inscrito : g.darGente()) {
 				Usuario ins = Servidor.getUsuario(inscrito);
 				ins.removeGrupo(g);
 				Servidor.changeFrase(ins, ins.getFrase());
 			}
-			
+
 			MulticastSocket m = new MulticastSocket(2015);
 			m.joinGroup(g.getIp());
 			String notif = "Este grupo fue cerrado a peticion del creador.";
-			DatagramPacket msg = new DatagramPacket(notif.getBytes(), notif.length(), g.getIp(), 2015);
+			DatagramPacket msg = new DatagramPacket(notif.getBytes(), notif
+					.length(), g.getIp(), 2015);
 			m.send(msg);
 			m.leaveGroup(g.getIp());
 			m.close();
-			
+
 			Servidor.removerGrupo(g);
-		}
-		else
+		} else
 			Servidor.removerDelGrupo(g, user);
-		
+
 		Stream.sendObject(cliente, "OK");
 	}
 

@@ -337,6 +337,11 @@ public class Cliente extends Observable{
 			return "Error al comunicarse con el servidor.";
 		}
 	}
+
+	public boolean changePassword(String text, String text2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	
 	
