@@ -337,6 +337,8 @@ public class Atender extends Thread {
 			m.send(msg);
 			m.leaveGroup(g.getIp());
 			m.close();
+			
+			Servidor.removerGrupo(g);
 		}
 		else
 			Servidor.removerDelGrupo(g, user);
