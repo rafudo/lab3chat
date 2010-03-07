@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Observable;
 import java.util.Vector;
@@ -14,6 +15,12 @@ import Servidor.Grupo;
 import conectividad.Stream;
 
 public class Cliente extends Observable{
+	
+	/**
+	 * Hostname del servidor
+	 */
+	public final static String HOST = "localhost";
+	
 	private Hashtable<String,Contacto> contactos;
 	private Vector<Grupo> grupos;
 	private String frase;
@@ -21,6 +28,15 @@ public class Cliente extends Observable{
 	private String password;
 	private int port;
 	private ThreadEscucha escucha;
+	/**
+	 * Grupo del usuario.
+	 */
+	private Grupo group;
+	
+	/**
+	 * Todos los grupos
+	 */
+	private ArrayList<Grupo> gruposTodos;
 
 	private Cliente(String username, String password,Hashtable<String,Contacto> contacts, Vector<Grupo> grupos,
 			String frase, int port)  {
@@ -32,12 +48,22 @@ public class Cliente extends Observable{
 		this.port=port;
 		escucha=new ThreadEscucha(this);
 		escucha.start();
+		
+		int n = 0;
+		while(n < grupos.size())
+		{
+			if(grupos.get(n).getOwner().equals(username))
+				group = grupos.get(n);
+			
+			n++;
+		}
+		
 	}
 
 	public void disconnect() {
 		
 		try {
-			Socket s = new Socket("localhost", 2245);
+			Socket s = new Socket(HOST, 2245);
 			Stream.sendObject(s, "CHAO");
 			Stream.sendObject(s, username);
 			Stream.receiveObject(s);
@@ -69,7 +95,7 @@ public class Cliente extends Observable{
 		Vector<Grupo> grupos = new Vector<Grupo>();
 		String frase = "";
 	
-		Socket s = new Socket("localhost", 2245);
+		Socket s = new Socket(HOST, 2245);
 		Stream.sendObject(s, "LOGIN");
 		Stream.sendObject(s, username);
 		Stream.sendObject(s, password);
@@ -146,8 +172,158 @@ public class Cliente extends Observable{
 		
 	}
 
+	/**
+	 * Retorna un listado de grupos a los que se esta inscrito.
+	 */
+	public String darListadoGruposInscritos()
+	{	
+		int i = 0;
+		
+		String lista = "Usted hace parte de " + grupos.size() + " grupos./n/n";
+		
+		while(i < grupos.size())
+		{
+			lista += "Grupo de " + grupos.get(i).getOwner() + ":/n";
+			for(String inscrito: grupos.get(i).darGente())
+				lista += "- " + inscrito + "/n";
+			lista += "/n";
+			i++;
+		}
+		return lista;
+	}
 	
-
+	/**
+	 * Retorna un lista de todos los grupos.
+	 */
+	public String darListadoGruposTodos()
+	{
+		try
+		{
+			Socket s = new Socket(HOST, 2245);
+			Stream.sendObject(s, "LISTA GRUPO");
+			gruposTodos = (ArrayList<Grupo>)Stream.receiveObject(s);
+			
+			int i = 0;
+			
+			String lista = gruposTodos.size() + " grupos./n/n";
+			
+			while(i < gruposTodos.size())
+			{
+				lista += "Grupo de " + gruposTodos.get(i).getOwner() + ":/n";
+				for(String inscrito: gruposTodos.get(i).darGente())
+					lista += "- " + inscrito + "/n";
+				lista += "/n";
+				i++;
+			}
+			
+			return lista;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return "Error al comunicarse con el servidor.";
+		}
+	}
+	
+	/**
+	 * Crea un grupo.
+	 */
+	public String crearGrupo()
+	{
+		try
+		{
+			Socket s = new Socket(HOST, 2245);
+			Stream.sendObject(s, "CREAR GRUPO");
+			Stream.sendObject(s, username);
+			
+			String respuesta = (String)Stream.receiveObject(s);
+			
+			if(respuesta.equals("ERROR"))
+				return "Usted ya tiene un grupo creado bajo su nombre.";
+			else
+			{
+				Grupo g = (Grupo)Stream.receiveObject(s);
+				grupos.add(g);
+				group = g;
+				return "Se creo su grupo de forma exitosa.";
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return "Error al comunicarse con el servidor.";
+		}
+	}
+	
+	/**
+	 * Salirse de un grupo, en caso que el usuario sea el dueno del grupo, se elimina el grupo.
+	 */
+	public String salirGrupo(String idGrupo)
+	{
+		int j = 0;
+		Grupo g = null;
+		
+		while(j < grupos.size())
+		{
+			if(grupos.get(j).getOwner().equals(idGrupo))
+				g = grupos.get(j);
+			
+			j++;
+		}
+		
+		if(g == null)
+			return "Usted no hace parte del grupo especificado.";
+		else
+		{
+			try
+			{
+				Socket s = new Socket(HOST, 2245);
+				Stream.sendObject(s, "SALIR GRUPO");
+				Stream.sendObject(s, username);
+				Stream.sendObject(s, g);
+				
+				String respuesta = (String)Stream.receiveObject(s);
+				
+				return respuesta;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				return "Error al comunicarse con el servidor.";
+			}
+		}
+	}
+	
+	/**
+	 * Unirse a un grupo.
+	 */
+	public String unirseGrupo(String idGrupo)
+	{
+		if(gruposTodos == null)
+			darListadoGruposTodos();
+		
+		Grupo g = gruposTodos.get(gruposTodos.indexOf(new Grupo(idGrupo, null)));
+		
+		if(g == null)
+			return "El grupo especificado no existe.";
+		
+		try
+		{
+			Socket s = new Socket(HOST, 2245);
+			Stream.sendObject(s, "UNIR GRUPO");
+			Stream.sendObject(s, username);
+			Stream.sendObject(s, g);
+			
+			grupos.add(g);
+			return (String)Stream.receiveObject(s);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return "Error al comunicarse con el servidor.";
+		}
+	}
+	
+	
 	
 
 
