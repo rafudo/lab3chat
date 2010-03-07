@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -58,7 +59,8 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 		panelNorte.setLayout(new BorderLayout());
 		panelNorte.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
 		nickLab = new JTextField(cliente.getFrase());
-		nickLab.setFont(new Font("Arial", Font.ITALIC, 10));
+		nickLab.setBackground(usernameLab.getBackground());
+		nickLab.setFont(new Font("Arial", Font.ITALIC|Font.BOLD, 12));
 		nickLab.addActionListener(this);
 		panelNorte.add(usernameLab,BorderLayout.CENTER);
 		panelNorte.add(nickLab,BorderLayout.SOUTH);
