@@ -1,7 +1,9 @@
 package threads;
 
 import java.io.*;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -254,7 +256,7 @@ public class Atender extends Thread {
 				.receiveObject(cliente));
 		Grupo g = (Grupo) Stream.receiveObject(cliente);
 		Servidor.addGrupo(g, user.getLog());
-		user.addGrupo(g.getOwner());
+		user.addGrupo(g);
 		Servidor.changeFrase(user, user.getFrase());
 		Stream.sendObject(cliente, "OK");
 	}
@@ -278,6 +280,8 @@ public class Atender extends Thread {
 
 			if (list.isEmpty()) {
 				Grupo group = new Grupo(user.getLog(), addr);
+				user.addGrupo(group);
+				Servidor.changeFrase(user, user.getFrase());
 				Servidor.addGrupo(group);
 				Stream.sendObject(cliente, "OK");
 				Stream.sendObject(cliente, group);
@@ -300,6 +304,8 @@ public class Atender extends Thread {
 				}
 
 				group = new Grupo(user.getLog(), addr);
+				user.addGrupo(group);
+				Servidor.changeFrase(user, user.getFrase());
 				Servidor.addGrupo(group);
 				Stream.sendObject(cliente, "OK");
 				Stream.sendObject(cliente, group);
@@ -315,7 +321,26 @@ public class Atender extends Thread {
 				.receiveObject(cliente));
 		Grupo g = (Grupo) Stream.receiveObject(cliente);
 
-		Servidor.removerDelGrupo(g, user);
+		if(g.getOwner().equals(user.getLog()))
+		{
+			for(String inscrito: g.darGente())
+			{
+				Usuario ins = Servidor.getUsuario(inscrito);
+				ins.removeGrupo(g);
+				Servidor.changeFrase(ins, ins.getFrase());
+			}
+			
+			MulticastSocket m = new MulticastSocket(2015);
+			m.joinGroup(g.getIp());
+			String notif = "Este grupo fue cerrado a peticion del creador.";
+			DatagramPacket msg = new DatagramPacket(notif.getBytes(), notif.length(), g.getIp(), 2015);
+			m.send(msg);
+			m.leaveGroup(g.getIp());
+			m.close();
+		}
+		else
+			Servidor.removerDelGrupo(g, user);
+		
 		Stream.sendObject(cliente, "OK");
 	}
 
