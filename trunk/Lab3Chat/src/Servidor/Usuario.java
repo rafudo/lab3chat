@@ -37,7 +37,7 @@ public class Usuario implements Serializable {
 	 * Lista de grupos a los que pertenece
 	 */
 
-	public ArrayList<String> grupos;
+	private ArrayList<String> grupos;
 
 	/**
 	 * Direccion IP del usuario.
@@ -121,6 +121,10 @@ public class Usuario implements Serializable {
 	public int getPort() {
 		return port;
 	}
+	
+	public ArrayList<String> getGrupos() {
+		return grupos;
+	}
 
 	public void setPuerto(int parseInt) {
 		port = parseInt;
@@ -135,6 +139,11 @@ public class Usuario implements Serializable {
 	public void setFrase(String nFrase) {
 		frase=nFrase;
 		
+	}
+	
+	public void addGrupo(String id)
+	{
+		grupos.add(id);
 	}
 
 }
