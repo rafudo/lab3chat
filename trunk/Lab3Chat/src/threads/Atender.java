@@ -159,6 +159,7 @@ public class Atender extends Thread {
 					.receiveObject(cliente)));
 
 			Servidor.addConnected(user);
+			
 			for (int i = 0; i < user.amigos.size(); i++) {
 				(new FriendStatusChanged(user.amigos.get(i), user)).start();
 			}
@@ -169,7 +170,6 @@ public class Atender extends Thread {
 			return true;
 		} else {
 			Stream.sendObject(cliente, "ERROR");
-
 			return false;
 		}
 	}
@@ -224,9 +224,13 @@ public class Atender extends Thread {
 	private void frase() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		if (user.getPass().equals((String) Stream.receiveObject(cliente)))
+		if (user!=null&&user.getPass().equals((String) Stream.receiveObject(cliente)))
 			Servidor.changeFrase(user, (String) Stream.receiveObject(cliente));
 		Stream.sendObject(cliente, "OK");
+		
+		for (int i = 0; i < user.amigos.size(); i++) {
+			(new FriendStatusChanged(user.amigos.get(i), user)).start();
+		}
 	}
 
 	/**
