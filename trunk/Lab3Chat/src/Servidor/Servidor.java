@@ -163,7 +163,7 @@ public class Servidor {
 	/**
 	 * Carga y crea el Servidor
 	 */
-	@SuppressWarnings("unchecked")
+	
 	private void loadServer() {
 		try {
 
@@ -190,7 +190,7 @@ public class Servidor {
 			
 			File f = new File(GRUPOS);
 			
-			if (f.createNewFile()) 
+			if (f.exists()) 
 			{
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
 				grupos = (ArrayList<Grupo>) ois.readObject();
