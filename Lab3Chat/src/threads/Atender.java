@@ -55,7 +55,7 @@ public class Atender extends Thread {
 				frase();
 			}
 			 else if (line.equals("AMIGO")) {
-				solicitud(null, null);
+				solicitud();
 			}
 			 else if(line.equals("NEW")){
 				newAccount();
@@ -235,15 +235,19 @@ public class Atender extends Thread {
 	/**
 	 * En caso que desee realizar una solicitud de amistad.
 	 */
-	private void solicitud(String[] partesMensaje, PrintWriter out)
+	private void solicitud()
 			throws Exception {
-		if (Servidor.getUsuario(partesMensaje[1]) != null) {
-			PeticionAmigo temp = new PeticionAmigo(partesMensaje[2],
-					partesMensaje[1]);
+		
+		Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
+		Usuario amigo = Servidor.getUsuario((String)Stream.receiveObject(cliente));
+		
+		if (amigo != null) {
+			PeticionAmigo temp = new PeticionAmigo(user.getLog(),
+					amigo.getLog());
 			Servidor.addFriendRequest(temp);
-			out.println("OK");
+			Stream.sendObject(cliente, "OK");
 		} else
-			out.println("ERROR");
+			Stream.sendObject(cliente, "ERROR");
 	}
 	
 	/**
