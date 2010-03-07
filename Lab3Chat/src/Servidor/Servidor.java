@@ -21,6 +21,7 @@ public class Servidor {
 	public final static String LOGS = "./data/accounts/";
 	public final static String PETICIONES = "./data/peticiones/";
 	public final static String INFO = "./data/info.properties";
+	public final static String GRUPOS = "./data/grupos";
 
 	// Atributos
 
@@ -40,16 +41,14 @@ public class Servidor {
 	private ArrayList<PeticionAmigo> peticionesAmistad;
 
 	/**
-	 * Properties con la informacion de los usuarios.
-	 */
-	private Properties info;
-
-	/**
 	 * Instancia unica del servidor
 	 */
 	private static Servidor servidor;
 
-	// TODO Grupos
+	/**
+	 * Lista de grupos
+	 */
+	private ArrayList<Grupo> grupos;
 
 	// Constructor
 	/**
@@ -61,6 +60,7 @@ public class Servidor {
 
 		conectados = new Hashtable<String, Usuario>();
 		peticionesAmistad = new ArrayList<PeticionAmigo>();
+		grupos = new ArrayList<Grupo>();
 	}
 
 	// Metodos
@@ -163,13 +163,14 @@ public class Servidor {
 	/**
 	 * Carga y crea el Servidor
 	 */
+	@SuppressWarnings("unchecked")
 	private void loadServer() {
 		try {
 
-			info = new Properties();
-			info.load(new FileInputStream(CONFIG));
+			Properties config = new Properties();
+			config.load(new FileInputStream(CONFIG));
 
-			server = new ServerSocket(Integer.parseInt(info
+			server = new ServerSocket(Integer.parseInt(config
 					.getProperty("puerto")));
 
 			// Llena la list de peticiones pendientes
@@ -184,9 +185,20 @@ public class Servidor {
 				peticionesAmistad.add(peticion);
 				n--;
 			}
-
-			// Carga el Properties
-			info.load(new FileInputStream(INFO));
+			
+			// Carga los grupos.
+			
+			File f = new File(GRUPOS);
+			
+			if (f.createNewFile()) 
+			{
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
+				grupos = (ArrayList<Grupo>) ois.readObject();
+				ois.close();
+			}
+			else
+				grupos = new ArrayList<Grupo>();
+			
 
 		} catch (Exception e) {
 			System.out
@@ -338,6 +350,95 @@ public class Servidor {
 
 	}
 
+	/**
+	 * Agrega un Grupo
+	 */
+	public static void addGrupo(Grupo g)
+	{
+		if (servidor == null) 
+		{
+			servidor = new Servidor();
+			servidor.loadServer();
+		}
+		
+		servidor.grupos.add(g);
+		
+		try
+		{	
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(GRUPOS));
+			oos.writeObject(servidor.grupos);
+			oos.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Agrega un Grupo
+	 */
+	public static void addGrupo(Grupo g, String user)
+	{
+		if (servidor == null) 
+		{
+			servidor = new Servidor();
+			servidor.loadServer();
+		}
+		
+		g = servidor.grupos.get(servidor.grupos.indexOf(g));
+		g.add(user);
+		
+		try
+		{	
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(GRUPOS));
+			oos.writeObject(servidor.grupos);
+			oos.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Retorna los grupos
+	 */
+	public static ArrayList<Grupo> darGrupos()
+	{
+		if (servidor == null) {
+			servidor = new Servidor();
+			servidor.loadServer();
+		}
+		
+		return servidor.grupos;
+	}
+	
+	/**
+	 * Saca al usuario del grupo
+	 */
+	public static void removerDelGrupo(Grupo g, Usuario user)
+	{
+		if (servidor == null) 
+		{
+			servidor = new Servidor();
+			servidor.loadServer();
+		}
+		
+		g = servidor.grupos.get(servidor.grupos.indexOf(g));
+		g.remover(user.getLog());
+		
+		try
+		{	
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(GRUPOS));
+			oos.writeObject(servidor.grupos);
+			oos.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	public static boolean exist(String login) {
 		if (servidor == null) {
