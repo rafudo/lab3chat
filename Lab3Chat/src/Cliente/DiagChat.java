@@ -60,6 +60,7 @@ public class DiagChat extends JFrame implements ActionListener{
 	public void dispose() {
 
 		super.dispose();
+		contacto.close();
 		contacto.setWindow(null);
 	}
 
@@ -74,7 +75,9 @@ public class DiagChat extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		contacto.sendMsg(txtMsg.getText());
+		String msg =txtMsg.getText();
+		if(contacto.sendMsg(msg))
+			txtChat.append("Yo: "+msg+"\n");
 		txtMsg.setText("");
 		
 	}

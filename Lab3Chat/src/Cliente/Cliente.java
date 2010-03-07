@@ -18,7 +18,8 @@ public class Cliente extends Observable{
 	private String username;
 	private String password;
 	private int port;
-private ThreadEscucha escucha;
+	private ThreadEscucha escucha;
+
 	private Cliente(String username, String password,Hashtable<String,Contacto> contacts, Vector<Grupo> grupos,
 			String frase, int port)  {
 		this.username=username;
@@ -110,6 +111,7 @@ private ThreadEscucha escucha;
 		}
 	
 	}
+	
 
 	public String getUsername() {
 
@@ -130,9 +132,7 @@ private ThreadEscucha escucha;
 		return port;
 	}
 
-	public void setContacts(Hashtable<String, Contacto> contactos2) {
-		
-	}
+	
 
 	public void modifyList(Contacto c) {
 		setChanged();
