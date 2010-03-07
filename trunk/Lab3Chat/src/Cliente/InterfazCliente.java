@@ -3,19 +3,19 @@ package Cliente;
 
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 
 import javax.swing.Box;
 import javax.swing.JMenuBar;
+import javax.swing.SwingUtilities;
+
 
 import javax.swing.JFrame;
 
 
-public class InterfazCliente extends JFrame implements ActionListener{
 
-	
+public class InterfazCliente extends JFrame {
 	
 
 	
@@ -82,14 +82,16 @@ public class InterfazCliente extends JFrame implements ActionListener{
 		
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	public static void main(String[] args) {
-		(new InterfazCliente()).setVisible(true);
+		
+	    SwingUtilities.invokeLater(new Runnable() {
+	      public void run() {
+	    	  
+	    	 (new InterfazCliente()).setVisible(true);	        
+	      }
+	    });
 	}
 	
 
