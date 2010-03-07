@@ -40,14 +40,19 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 	private JLabel usernameLab;
 	private JTextField nickLab;
 	private JMenuItem itmCerrar;
+	private JMenuItem itmCambiar;
 	public ConnectedPane(InterfazCliente interfazCliente, Cliente client) {
 		interfaz = interfazCliente;
 		
 		JMenu menuSesion = new JMenu("Sesión");
+		itmCambiar = new JMenuItem("Cambiar contraseña");
+		itmCambiar.addActionListener(this);
+		menuSesion.add(itmCambiar);
 		menuSesion.addSeparator();
 		itmCerrar = new JMenuItem("Cerrar sesión");
 		itmCerrar.addActionListener(this);
 		menuSesion.add(itmCerrar);
+		
 		interfaz.getJMenuBar().removeAll();
 		interfaz.getJMenuBar().add(menuSesion);
 		this.cliente = client;
@@ -111,6 +116,8 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 		else if(e.getSource().equals(itmCerrar)){
 			cliente.disconnect();
 			interfaz.loginScreen();
+		}else if(e.getSource().equals(itmCambiar)){
+			System.out.println(DiagChangePass.changePassword(interfaz, cliente));
 		}
 
 	}
