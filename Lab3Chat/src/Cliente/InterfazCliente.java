@@ -3,8 +3,7 @@ package Cliente;
 
 
 import java.awt.Component;
-import java.io.IOException;
-import java.net.UnknownHostException;
+
 
 import javax.swing.Box;
 
@@ -52,7 +51,6 @@ public class InterfazCliente extends JFrame {
 
 	public static void main(String[] args) {
 		(new InterfazCliente()).setVisible(true);
-
 	}
 
 	

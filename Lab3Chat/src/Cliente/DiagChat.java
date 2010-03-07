@@ -1,6 +1,8 @@
 package Cliente;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -9,42 +11,42 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class DiagChat extends JFrame {
+public class DiagChat extends JFrame implements ActionListener{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Cliente cliente;
+	
 	private Contacto contacto;
 	private JTextField txtMsg;
 	private JButton btnSend;
 	private JTextArea txtChat;
 
-	public DiagChat(Cliente e, Contacto c) {
+	public DiagChat( Contacto c) {
 
 		super();
 		if (c != null)
 			setTitle("Conversacion con " + c.getUsername());
-		setTitle("Conversacion");
-		cliente = e;
+		else 
+			setTitle("Conversacion");
+		
 		contacto = c;
 		contacto.setWindow(this);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setSize(350, 375);
 		setLayout(new BorderLayout());
-		txtChat = new JTextArea(
-				"asdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\n"
-						+ "asdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\nasdasd\n");
+		txtChat = new JTextArea();
 		txtChat.setLineWrap(true);
 		JScrollPane sp = new JScrollPane();
 		sp.setViewportView(txtChat);
 		add(sp, BorderLayout.CENTER);
 
 		txtMsg = new JTextField();
+		txtMsg.addActionListener(this);
 		btnSend = new JButton("Enviar");
-
+		btnSend.addActionListener(this);
 		JPanel pc = new JPanel();
 
 		pc.setLayout(new BorderLayout());
@@ -58,11 +60,23 @@ public class DiagChat extends JFrame {
 	public void dispose() {
 
 		super.dispose();
-		System.out.println(contacto.getWindow());
+		contacto.setWindow(null);
 	}
 
 	public static void main(String[] args) {
-		(new DiagChat(null, null)).setVisible(true);
+		(new DiagChat( null)).setVisible(true);
+	}
+
+	public void append(String o) {
+		txtChat.append(contacto.getUsername()+": "+o+"\n");
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		contacto.sendMsg(txtMsg.getText());
+		txtMsg.setText("");
+		
 	}
 
 }
