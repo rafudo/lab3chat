@@ -31,7 +31,7 @@ public class LoginPane extends JPanel implements ActionListener {
 		txtLogin = new JTextField();
 		txtLogin.setToolTipText("nombre de usuario");
 		txtLogin.setColumns(18);
-
+		txtLogin.addActionListener(this);
 		JPanel p = new JPanel();
 		p.setLayout(new GridLayout(3, 1));
 
@@ -39,6 +39,7 @@ public class LoginPane extends JPanel implements ActionListener {
 		txtPass = new JPasswordField();
 		txtPass.setToolTipText("contraseña");
 		txtPass.setColumns(18);
+		txtPass.addActionListener(this);
 		p.add(txtPass);
 		btnConnect = new JButton("Conectar");
 		btnConnect.addActionListener(this);
@@ -49,12 +50,12 @@ public class LoginPane extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(btnConnect)) {
+		
 			Cliente cliente=connect(txtLogin.getText(),new String(txtPass.getPassword()));
 			if (cliente!=null) {
 				interfazCliente.connectedScreen(cliente);
 			}
-		}
+	
 
 	}
 	

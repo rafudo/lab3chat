@@ -109,7 +109,9 @@ public class Contacto implements InputListener{
 			chat=new DiagChat(this);
 			chat.setVisible(true);
 		}
-		chat.append((String)o);
+		String msg = (String)o;
+		if(msg.startsWith("C"))
+		chat.append(((String)o).substring(1));
 		
 	}
 

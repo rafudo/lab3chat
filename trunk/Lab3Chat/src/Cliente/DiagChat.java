@@ -22,6 +22,7 @@ public class DiagChat extends JFrame implements ActionListener{
 	private Contacto contacto;
 	private JTextField txtMsg;
 	private JButton btnSend;
+	private JScrollPane sp;
 	private JTextArea txtChat;
 
 	public DiagChat( Contacto c) {
@@ -39,7 +40,8 @@ public class DiagChat extends JFrame implements ActionListener{
 		setLayout(new BorderLayout());
 		txtChat = new JTextArea();
 		txtChat.setLineWrap(true);
-		JScrollPane sp = new JScrollPane();
+		txtChat.setEditable(false);
+		sp = new JScrollPane();
 		sp.setViewportView(txtChat);
 		add(sp, BorderLayout.CENTER);
 
@@ -69,8 +71,8 @@ public class DiagChat extends JFrame implements ActionListener{
 	}
 
 	public void append(String o) {
-		txtChat.append(contacto.getUsername()+": "+o+"\n");
-		
+		txtChat.append(contacto.getUsername()+": "+o+"\n");	
+		sp.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getMaximum());
 	}
 
 	@Override
@@ -79,6 +81,7 @@ public class DiagChat extends JFrame implements ActionListener{
 		if(contacto.sendMsg(msg))
 			txtChat.append("Yo: "+msg+"\n");
 		txtMsg.setText("");
+		sp.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getMaximum());
 		
 	}
 
