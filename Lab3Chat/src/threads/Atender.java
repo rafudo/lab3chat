@@ -153,7 +153,7 @@ public class Atender extends Thread {
 			}
 
 			n = user.getGrupos().size();
-			Stream.sendObject(cliente, n);
+			Stream.sendObject(cliente, ""+n);
 			for(int i=0;i<n;i++){
 				Stream.sendObject(cliente, user.getGrupos().get(n));
 			}
