@@ -56,6 +56,7 @@ public class InterfazCliente extends JFrame {
 	
 
 	public void connectedScreen(Cliente cliente) {
+		System.setProperty("username", cliente.getUsername());
 		getContentPane().removeAll();
 		add(new ConnectedPane(this,cliente));
 		paintAll(getGraphics())	;

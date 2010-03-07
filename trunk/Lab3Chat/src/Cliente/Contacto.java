@@ -88,16 +88,18 @@ public class Contacto implements InputListener{
 		
 	}
 	
-	public void sendMsg(String username,String msg){
+	public boolean sendMsg(String msg){
 		try {
 			if(out==null){
 				out =  new Socket(ip,port);
 				Stream.sendObject(out, "CHARLA");
-				Stream.sendObject(out, username);
+				Stream.sendObject(out, System.getProperty("username"));
 			}
 			Stream.sendObject(out, "C"+msg);
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -118,6 +120,11 @@ public class Contacto implements InputListener{
 	}
 	public DiagChat getWindow() {
 		return chat;
+		
+	}
+
+	public void close() {
+		
 		
 	}
 
