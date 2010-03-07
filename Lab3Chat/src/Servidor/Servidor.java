@@ -190,7 +190,7 @@ public class Servidor {
 			
 			File f = new File(GRUPOS);
 			
-			if (f.exists()) 
+			if (!f.exists()) 
 			{
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
 				grupos = (ArrayList<Grupo>) ois.readObject();
