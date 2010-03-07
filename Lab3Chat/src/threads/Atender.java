@@ -1,10 +1,13 @@
 package threads;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import conectividad.Stream;
 
+import Servidor.Grupo;
 import Servidor.PeticionAmigo;
 import Servidor.Servidor;
 import Servidor.Usuario;
@@ -53,9 +56,21 @@ public class Atender extends Thread {
 			}
 			 else if (line.equals("AMIGO")) {
 				solicitud(null, null);
-			}else if(line.equals("NEW")){
+			}
+			 else if(line.equals("NEW")){
 				newAccount();
 			}
+		    else if(line.equals("UNIR GRUPO")){
+			   unirGrupo();
+		    }
+		    else if(line.equals("SALIR GRUPO")){
+			   salirGrupo();
+		    }
+		    else if(line.equals("CREAR GRUPO")){
+				   crearGrupo();
+			    }
+			
+			
 		
 
 			cliente.close();
@@ -223,4 +238,87 @@ public class Atender extends Thread {
 		} else
 			out.println("ERROR");
 	}
+	
+	/**
+	 * Desea unirse a un grupo
+	 */
+	private void unirGrupo() throws IOException, ClassNotFoundException
+	{
+			Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
+			Stream.sendObject(cliente, Servidor.darGrupos());
+			Grupo g = (Grupo)Stream.receiveObject(cliente);
+			Servidor.addGrupo(g, user.getLog());
+			user.addGrupo(g);
+			Servidor.changeFrase(user, user.getFrase());
+			Stream.sendObject(cliente, "OK");
+	}
+	
+	/**
+	 * Desea crear un grupo.
+	 */
+	private void crearGrupo() throws IOException, ClassNotFoundException
+	{
+		Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
+		
+		ArrayList<Grupo> list = Servidor.darGrupos();
+		if(list.contains(new Grupo(user.getLog(), null)))
+		{
+			Stream.sendObject(cliente, "ERROR");
+		}
+		else
+		{
+			int num1 = (int)Math.random()*255;
+			int num2 = (int)Math.random()*255;
+			
+			InetAddress addr = InetAddress.getByName("230.255." + num1+"." + num2);
+			
+			if(list.isEmpty())
+			{
+				Grupo group = new Grupo(user.getLog(), addr);
+				Servidor.addGrupo(group);
+				Stream.sendObject(cliente, "OK");
+				Stream.sendObject(cliente, group);
+			}
+			else
+			{
+				int p = 0;
+				Grupo group = list.get(p);
+				int fin = list.size();
+				
+				while(p < fin)
+				{
+					p++;
+					if(group.getIp().equals(addr))
+					{
+						p = 0;
+						num1 = (int)Math.random()*255;
+						num2 = (int)Math.random()*255;
+						addr = InetAddress.getByName("230.255." + num1+"." + num2);
+					}
+					
+					group = list.get(p);
+				}
+				
+				group = new Grupo(user.getLog(), addr);
+				Servidor.addGrupo(group);
+				Stream.sendObject(cliente, "OK");
+				Stream.sendObject(cliente, group);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Desea salirse de un grupo.
+	 */
+	private void salirGrupo()  throws IOException, ClassNotFoundException
+	{
+		Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
+		Grupo g = (Grupo)Stream.receiveObject(cliente);
+		
+		Servidor.removerDelGrupo(g, user);
+		Stream.sendObject(cliente, "OK");
+	}
+	
+	
 }
