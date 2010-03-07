@@ -64,9 +64,9 @@ public class ConnectedPane extends JTabbedPane implements Observer{
 				if(e.getClickCount()==2){
 					int index=lstContactos.locationToIndex(e.getPoint());
 					Contacto c= (Contacto) lstContactos.getModel().getElementAt(index);
-					System.out.println("bef"+c.getWindow());
-					(new DiagChat(c)).setVisible(true);
-					System.out.println("Aft"+c.getWindow());
+					
+					c.openWindow();
+				
 				}
 			}
 		});
