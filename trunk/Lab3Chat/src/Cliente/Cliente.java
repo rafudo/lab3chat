@@ -9,6 +9,8 @@ import java.util.Hashtable;
 import java.util.Observable;
 import java.util.Vector;
 
+import Servidor.Grupo;
+
 import conectividad.Stream;
 
 public class Cliente extends Observable{
