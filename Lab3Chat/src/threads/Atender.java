@@ -69,6 +69,9 @@ public class Atender extends Thread {
 		    else if(line.equals("CREAR GRUPO")){
 				   crearGrupo();
 			    }
+		    else if(line.equals("LISTA GRUPO")){
+				   listaGrupos();
+			    }
 			
 			
 		
@@ -149,7 +152,11 @@ public class Atender extends Thread {
 				
 			}
 
-			Stream.sendObject(cliente, "0");
+			n = user.getGrupos().size();
+			Stream.sendObject(cliente, n);
+			for(int i=0;i<n;i++){
+				Stream.sendObject(cliente, user.getGrupos().get(n));
+			}
 
 			user.setIP((String) Stream.receiveObject(cliente));
 			user.setPuerto(Integer.parseInt((String) Stream.receiveObject(cliente)) );
@@ -245,10 +252,9 @@ public class Atender extends Thread {
 	private void unirGrupo() throws IOException, ClassNotFoundException
 	{
 			Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
-			Stream.sendObject(cliente, Servidor.darGrupos());
 			Grupo g = (Grupo)Stream.receiveObject(cliente);
 			Servidor.addGrupo(g, user.getLog());
-			user.addGrupo(g);
+			user.addGrupo(g.getOwner());
 			Servidor.changeFrase(user, user.getFrase());
 			Stream.sendObject(cliente, "OK");
 	}
@@ -320,5 +326,12 @@ public class Atender extends Thread {
 		Stream.sendObject(cliente, "OK");
 	}
 	
+	/**
+	 * Desea un listado de grupos
+	 */
+	private void listaGrupos()  throws IOException, ClassNotFoundException
+	{
+		Stream.sendObject(cliente, Servidor.darGrupos());
+	}
 	
 }
