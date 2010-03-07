@@ -153,7 +153,22 @@ public class Cliente extends Observable{
 	}
 
 	public void cambiarFrase(String text) {
-		// TODO Auto-generated method stub
+		try {
+			Socket s = new Socket("localhost", 2245);
+			Stream.sendObject(s, "FRASE");
+			Stream.sendObject(s, username);
+			Stream.sendObject(s, password);
+			Stream.sendObject(s, text);
+			Stream.receiveObject(s);
+		
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+
+			e.printStackTrace();
+		}
 		
 	}
 
