@@ -103,12 +103,17 @@ public class Contacto implements InputListener{
 
 	@Override
 	public void update(Object o) {
-		
+		if(chat==null){
+			chat=new DiagChat(this);
+			chat.setVisible(true);
+		}
+		chat.append((String)o);
 		
 	}
 
 	public void setWindow(DiagChat diagChat) {
 		chat= diagChat;
+		System.gc();
 		
 	}
 	public DiagChat getWindow() {
