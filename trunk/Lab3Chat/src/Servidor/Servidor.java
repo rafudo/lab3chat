@@ -342,31 +342,6 @@ public class Servidor {
 		}
 	}
 	
-	/**
-	 * Agrega un Grupo
-	 */
-	public static void addGrupo(Grupo g, String user)
-	{
-		if (servidor == null) 
-		{
-			servidor = new Servidor();
-			servidor.loadServer();
-		}
-		
-		g = servidor.grupos.get(servidor.grupos.indexOf(g));
-		g.add(user);
-		
-		try
-		{	
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(GRUPOS));
-			oos.writeObject(servidor.grupos);
-			oos.close();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
 	
 	/**
 	 * Retorna los grupos
@@ -381,33 +356,6 @@ public class Servidor {
 		return servidor.grupos;
 	}
 	
-	/**
-	 * Saca al usuario del grupo
-	 */
-	public static void removerDelGrupo(Grupo g, Usuario user)
-	{
-		if (servidor == null) 
-		{
-			servidor = new Servidor();
-			servidor.loadServer();
-		}
-		
-		g = servidor.grupos.get(servidor.grupos.indexOf(g));
-		g.remover(user.getLog());
-		user.removeGrupo(g);
-		changeFrase(user, user.getFrase());
-		
-		try
-		{	
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(GRUPOS));
-			oos.writeObject(servidor.grupos);
-			oos.close();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
 	
 	public static boolean exist(String login) {
 		if (servidor == null) {

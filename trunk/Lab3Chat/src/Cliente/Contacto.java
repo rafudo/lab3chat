@@ -2,7 +2,9 @@ package Cliente;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.Date;
 import java.util.Hashtable;
 
 import conectividad.InputListener;
@@ -10,21 +12,33 @@ import conectividad.Stream;
 
 public class Contacto implements InputListener {
 	private String frase;
+
 	private String username;
+
 	private String ip;
+
 	private int port;
+
 	private Thread reader;
 
 	private Socket in;
+
 	private Socket out;
+
 	private DiagChat chat;
+
 	private Hashtable<Integer, File> archivos;
+
 	private int fileNumber;
+
 	private boolean connected;
+
+	private String conversa;
 
 	public Contacto(String username, String frase, String ip,
 			boolean connected, int porto) {
 		this.fileNumber = 100;
+		conversa="";
 		archivos = new Hashtable<Integer, File>();
 		this.frase = frase;
 		this.username = username;
@@ -101,6 +115,7 @@ public class Contacto implements InputListener {
 				Stream.sendObject(out, "CHARLA");
 				Stream.sendObject(out, System.getProperty("username"));
 			}
+			conversa += "Yo: " + msg + "\n";
 			Stream.sendObject(out, "C" + msg);
 			return true;
 		} catch (IOException e) {
@@ -116,21 +131,24 @@ public class Contacto implements InputListener {
 			chat.setVisible(true);
 		}
 		String msg = (String) o;
-		System.out.println(msg);
-		if (msg.startsWith("C"))
-			chat.append(msg.substring(1));
-		else if (msg.startsWith("F")) {
+		
+		if (msg.startsWith("C")) {
+			String m = msg.substring(1);
+			
+			chat.append(m);
+			conversa+=username+": "+m+"\n";
+		} else if (msg.startsWith("F")) {
 			chat.askReiciveFile(Integer.parseInt(msg.substring(1, 4)), msg
 					.substring(4));
-		}else if (msg.startsWith("R")){
-			
-			if(msg.charAt(4)=='Y'){
+		} else if (msg.startsWith("R")) {
+
+			if (msg.charAt(4) == 'Y') {
 				int id = Integer.parseInt(msg.substring(1, 4));
 				File f = archivos.remove(id);
-				chat.msg("//"+username+" ha aceptado el archivo.");
-				(new ThreadSendFile(this,f)).start();
-			}else{
-				chat.msg("//"+username+" ha aceptado el archivo.");
+				chat.msg("//" + username + " ha aceptado el archivo.");
+				(new ThreadSendFile(this, f)).start();
+			} else {
+				chat.msg("//" + username + " ha aceptado el archivo.");
 			}
 		}
 
@@ -147,11 +165,26 @@ public class Contacto implements InputListener {
 
 	}
 
-	public void close() {
+	public void close(boolean save) {
 
 		try {
+			System.out.println("a ver "+save);
 			if (out != null)
 				out.close();
+			if (save) {
+				Date d = new Date(System.currentTimeMillis());
+				File f = new File("./data/conversas/"+
+						d+d.getTime()
+						+ "-"
+						+ System.getProperty("username")
+						+ "-to-"
+						+ username+".txt");
+				f.createNewFile();
+				PrintWriter wr = new PrintWriter(f);
+				wr.println(conversa);
+				wr.close();
+				conversa="";
+			}
 		} catch (IOException e) {
 			System.out.println("cambiar por e.printstacjtrac");
 		}
@@ -172,21 +205,21 @@ public class Contacto implements InputListener {
 				Stream.sendObject(out, "CHARLA");
 				Stream.sendObject(out, System.getProperty("username"));
 			}
-			
+
 			archivos.put(fileNumber, f);
 			System.out.println(f);
 			Stream.sendObject(out, "F" + fileNumber + f.getName());
 			fileNumber = (fileNumber == 999) ? 100 : fileNumber + 1;
-	
+
 		} catch (IOException e) {
 			e.printStackTrace();
-		
+
 		}
 
 	}
 
 	public void reiciveFile(int fileid, String file, boolean recibir) {
-		
+
 		try {
 			if (out == null || out.isClosed()) {
 				out = new Socket(ip, port);

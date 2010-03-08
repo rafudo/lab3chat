@@ -61,9 +61,9 @@ public class Atender extends Thread {
 				newAccount();
 			} else if (line.equals("UNIR GRUPO")) {
 				unirGrupo();
-			} else if (line.equals("SALIR GRUPO")) {
+			}/* else if (line.equals("SALIR GRUPO")) {
 				salirGrupo();
-			} else if (line.equals("CREAR GRUPO")) {
+			} */else if (line.equals("CREAR GRUPO")) {
 				crearGrupo();
 			} else if (line.equals("LISTA GRUPO")) {
 				listaGrupos();
@@ -304,7 +304,7 @@ public class Atender extends Thread {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
 		Grupo g = (Grupo) Stream.receiveObject(cliente);
-		Servidor.addGrupo(g, user.getLog());
+		
 		user.addGrupo(g);
 		Servidor.changeFrase(user, user.getFrase());
 		Stream.sendObject(cliente, "OK");
@@ -365,13 +365,13 @@ public class Atender extends Thread {
 	/**
 	 * Desea salirse de un grupo.
 	 */
-	private void salirGrupo() throws IOException, ClassNotFoundException {
+	/*private void salirGrupo() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
 		Grupo g = (Grupo) Stream.receiveObject(cliente);
 
 		if (g.getOwner().equals(user.getLog())) {
-			for (String inscrito : g.darGente()) {
+			for (String inscrito : ) {
 				Usuario ins = Servidor.getUsuario(inscrito);
 				ins.removeGrupo(g);
 				Servidor.changeFrase(ins, ins.getFrase());
@@ -391,7 +391,7 @@ public class Atender extends Thread {
 			Servidor.removerDelGrupo(g, user);
 
 		Stream.sendObject(cliente, "OK");
-	}
+	}*/
 
 	/**
 	 * Desea un listado de grupos
