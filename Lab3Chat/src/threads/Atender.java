@@ -156,9 +156,7 @@ public class Atender extends Thread {
 			for (int i = 0; i < user.amigos.size(); i++) {
 				(new FriendStatusChanged(user.amigos.get(i), user)).start();
 			}
-			Monitor moni = new Monitor(user.getLog(), user.getIP(), user
-					.getPort());
-			moni.start();
+			
 
 			return true;
 		} else {
