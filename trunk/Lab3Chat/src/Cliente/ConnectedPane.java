@@ -112,7 +112,7 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(nickLab))
-			cliente.cambiarFrase(nickLab.getText());
+			cliente.changeFrase(nickLab.getText());
 		else if(e.getSource().equals(itmCerrar)){
 			cliente.disconnect();
 			interfaz.loginScreen();

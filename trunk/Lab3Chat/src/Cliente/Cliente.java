@@ -152,7 +152,7 @@ public class Cliente extends Observable{
 		return frase;
 	}
 
-	public void cambiarFrase(String text) {
+	public void changeFrase(String text) {
 		try {
 			Socket s = new Socket("localhost", 2245);
 			Stream.sendObject(s, "FRASE");
@@ -338,8 +338,24 @@ public class Cliente extends Observable{
 		}
 	}
 
-	public boolean changePassword(String text, String text2) {
-		// TODO Auto-generated method stub
+	public boolean changePassword(String actual, String nueva) {
+		try {
+			Socket s = new Socket("localhost", 2245);
+			Stream.sendObject(s, "PASS");
+			Stream.sendObject(s, username);			
+			Stream.sendObject(s, actual);
+			Stream.sendObject(s, nueva);
+			
+			return Stream.receiveObject(s).equals("OK");
+		
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+
+			e.printStackTrace();
+		}
 		return false;
 	}
 	
