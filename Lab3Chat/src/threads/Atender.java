@@ -83,20 +83,13 @@ public class Atender extends Thread {
 	private void newAccount() {
 		try {
 			String login = (String) Stream.receiveObject(cliente);
-			String pss = "";
-			String confpss = "";
+
 			if (!Servidor.exist(login)) {
 				Stream.sendObject(cliente, "OK");
-				pss = (String) Stream.receiveObject(cliente);
-				confpss = (String) Stream.receiveObject(cliente);
-				if (pss.equals(confpss)) {
-					Stream.sendObject(cliente, "OK");
-					confpss = (String) Stream.receiveObject(cliente);
-					Usuario asd = new Usuario(login, pss, confpss);
-					Servidor.addUser(asd);
-				} else {
-					Stream.sendObject(cliente, "ERROR");
-				}
+				String pss = (String) Stream.receiveObject(cliente);
+
+				Usuario asd = new Usuario(login, pss, "");
+				Servidor.addUser(asd);
 			} else {
 				Stream.sendObject(cliente, "ERROR");
 			}
