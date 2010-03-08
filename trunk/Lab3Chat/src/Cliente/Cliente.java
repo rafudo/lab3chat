@@ -59,6 +59,7 @@ public class Cliente extends Observable{
 		}
 		
 	}
+	
 
 	public void disconnect() {
 		
@@ -358,6 +359,30 @@ public class Cliente extends Observable{
 		}
 		return false;
 	}
+
+
+	public boolean addContact(String con) {
+		
+		try {
+			Socket s = new Socket("localhost", 2245);
+			Stream.sendObject(s, "AMIGO");
+			Stream.sendObject(s, username);			
+			Stream.sendObject(s, con);
+			
+			
+			return Stream.receiveObject(s).equals("OK");
+		
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	
 	
 	

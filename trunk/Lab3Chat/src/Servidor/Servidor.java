@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 
 import threads.Atender;
-import threads.PeticionesPendientes;
+
 
 /**
  * Clase Servidor.
@@ -35,11 +35,7 @@ public class Servidor {
 	 */
 	private Hashtable<String, Usuario> conectados;
 
-	/**
-	 * Lista de notificaciones pendientes.
-	 */
-	private ArrayList<PeticionAmigo> peticionesAmistad;
-
+	
 	/**
 	 * Instancia unica del servidor
 	 */
@@ -59,7 +55,7 @@ public class Servidor {
 	public Servidor() {
 
 		conectados = new Hashtable<String, Usuario>();
-		peticionesAmistad = new ArrayList<PeticionAmigo>();
+		
 		grupos = new ArrayList<Grupo>();
 	}
 
@@ -74,9 +70,7 @@ public class Servidor {
 
 		}
 
-		PeticionesPendientes hilo = new PeticionesPendientes();
-		hilo.start();
-
+	
 		while (true) {
 			try {
 				System.out.println("Esperando conecciones...");
@@ -174,17 +168,7 @@ public class Servidor {
 					.getProperty("puerto")));
 
 			// Llena la list de peticiones pendientes
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(
-					new FileInputStream(PETICIONES)));
-
-			int n = Integer.parseInt(buffer.readLine());
-
-			while (n > 0) {
-				String[] temp = buffer.readLine().split(":");
-				PeticionAmigo peticion = new PeticionAmigo(temp[0], temp[1]);
-				peticionesAmistad.add(peticion);
-				n--;
-			}
+			
 			
 			// Carga los grupos.
 			
@@ -298,33 +282,7 @@ public class Servidor {
 		}
 	}
 
-	/**
-	 * Agrega una peticion de amistad.
-	 */
-	public static void addFriendRequest(PeticionAmigo peticion) {
-		if (servidor == null) {
-			servidor = new Servidor();
-			servidor.loadServer();
-		}
-
-		servidor.peticionesAmistad.add(peticion);
-	}
-
-	/**
-	 * Retorna una solicitud pendiente, null si no hay mas solicitudes
-	 * pendientes.
-	 */
-	public static PeticionAmigo nextPendingRequest() {
-		if (servidor == null) {
-			servidor = new Servidor();
-			servidor.loadServer();
-		}
-
-		if (servidor.peticionesAmistad.isEmpty())
-			return null;
-		else
-			return servidor.peticionesAmistad.get(0);
-	}
+	
 
 	/**
 	 * Le agrega un amigo a un usuario.
@@ -335,11 +293,20 @@ public class Servidor {
 			servidor.loadServer();
 		}
 		try {
+			if(!user.amigos.contains(amigo.getLog())){
 			user.amigos.add(amigo.getLog());
 			ObjectOutputStream oos = new ObjectOutputStream(
 					new FileOutputStream(LOGS + user.getLog()));
 			oos.writeObject(user);
 			oos.close();
+			}
+			if(!amigo.amigos.contains(user.getLog())){
+				amigo.amigos.add(user.getLog());
+				ObjectOutputStream oos = new ObjectOutputStream(
+						new FileOutputStream(LOGS + amigo.getLog()));
+				oos.writeObject(amigo);
+				oos.close();
+			}
 		} catch (FileNotFoundException e) {
 
 			e.printStackTrace();

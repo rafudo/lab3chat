@@ -3,9 +3,7 @@ package Cliente;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -20,6 +18,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -41,6 +40,7 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 	private JTextField nickLab;
 	private JMenuItem itmCerrar;
 	private JMenuItem itmCambiar;
+	private JMenuItem itmAgregar;
 	public ConnectedPane(InterfazCliente interfazCliente, Cliente client) {
 		interfaz = interfazCliente;
 		
@@ -52,9 +52,13 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 		itmCerrar = new JMenuItem("Cerrar sesión");
 		itmCerrar.addActionListener(this);
 		menuSesion.add(itmCerrar);
-		
+		JMenu menuCon = new JMenu("Contactos");
+		itmAgregar = new JMenuItem("Agregar contacto");
+		itmAgregar.addActionListener(this);
+		menuCon.add(itmAgregar);
 		interfaz.getJMenuBar().removeAll();
 		interfaz.getJMenuBar().add(menuSesion);
+		interfaz.getJMenuBar().add(menuCon);
 		this.cliente = client;
 		panelContactos = new JPanel();
 		panelContactos.setLayout(new BorderLayout());
@@ -117,7 +121,26 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 			cliente.disconnect();
 			interfaz.loginScreen();
 		}else if(e.getSource().equals(itmCambiar)){
-			System.out.println(DiagChangePass.changePassword(interfaz, cliente));
+			if(DiagChangePass.changePassword(interfaz, cliente))
+			{
+			JOptionPane
+			.showMessageDialog(this,"La contraseña fue cambiada exitosamente",
+					"Cambio de contraseña",JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				JOptionPane
+				.showMessageDialog(this,"La contraseña no pudo ser cambiada",
+						"Cambio de contraseña",JOptionPane.ERROR_MESSAGE);
+			}
+		}else if(e.getSource().equals(itmAgregar)){
+			String con = JOptionPane.showInputDialog(this, "Escribe el username de tu contacto", "Agregar contacto", JOptionPane.PLAIN_MESSAGE);
+			if(cliente.addContact(con))
+				JOptionPane
+				.showMessageDialog(this,"El contacto fue agregado con exito",
+						 "Agregar contacto",JOptionPane.INFORMATION_MESSAGE);
+			else
+				JOptionPane
+				.showMessageDialog(this,"El contacto no pudo ser agregado",
+						 "Agregar contacto",JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
