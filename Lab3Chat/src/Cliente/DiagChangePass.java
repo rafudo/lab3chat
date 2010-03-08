@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class DiagChangePass extends JDialog implements ActionListener {
@@ -24,9 +25,9 @@ public class DiagChangePass extends JDialog implements ActionListener {
 	private static DiagChangePass diag;
 	private JButton btnChange;
 	private JButton btnCancel;
-	private JTextField txtActual;
-	private JTextField txtNueva;
-	private JTextField txtConf;
+	private JPasswordField txtActual;
+	private JPasswordField txtNueva;
+	private JPasswordField txtConf;
 	private Cliente cliente;
 
 	private DiagChangePass(InterfazCliente interfaz, Cliente cliente) {
@@ -38,15 +39,25 @@ public class DiagChangePass extends JDialog implements ActionListener {
 		btnChange.addActionListener(this);
 		btnCancel = new JButton("Cancelar");
 		btnCancel.addActionListener(this);
+		ActionListener a=new ActionListener(){
 
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				btnChange.doClick();
+				
+			}
+			
+		};
 		JLabel labActual = new JLabel("Contraseña Actual");
-		txtActual = new JTextField();
+		txtActual = new JPasswordField();
+		txtActual.addActionListener(a);
 		JLabel labNueva = new JLabel("Contraseña Nueva");
 
-		txtNueva = new JTextField();
+		txtNueva = new JPasswordField();
+		txtNueva.addActionListener(a);
 		JLabel labConf = new JLabel("Confirmación");
-		txtConf = new JTextField();
-
+		txtConf = new JPasswordField();
+		txtConf.addActionListener(a);
 		JPanel ps = new JPanel();
 		ps.setLayout(new FlowLayout());
 
@@ -82,8 +93,10 @@ public class DiagChangePass extends JDialog implements ActionListener {
 			if (txtNueva.getText().equals(txtConf.getText())) {
 				changed = cliente.changePassword(txtActual.getText(),txtNueva.getText());
 				if(changed){
-					JOptionPane.showMessageDialog(this,"La contraseña no pudo ser cambiada","Cambio contraseña", JOptionPane.ERROR_MESSAGE);	
+						
 					diag.dispose();	
+				}else{
+					JOptionPane.showMessageDialog(this,"La contraseña no pudo ser cambiada","Cambio contraseña", JOptionPane.ERROR_MESSAGE);
 				}
 				
 			}else{

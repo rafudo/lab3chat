@@ -199,10 +199,10 @@ public class Atender extends Thread {
 	private void pass() throws Exception {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		String ps = (String) Stream.receiveObject(cliente);
+		
 		if (((String) Stream.receiveObject(cliente)).equals(user.getPass())) {
 			try {
-				Servidor.changePass(user, ps);
+				Servidor.changePass(user, (String) Stream.receiveObject(cliente));
 			} catch (Exception e) {
 				Stream.sendObject(cliente, "ERROR");
 			}
