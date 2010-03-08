@@ -341,7 +341,7 @@ public class Cliente extends Observable{
 
 	public boolean changePassword(String actual, String nueva) {
 		try {
-			Socket s = new Socket("localhost", 2245);
+			Socket s = new Socket(HOST, 2245);
 			Stream.sendObject(s, "PASS");
 			Stream.sendObject(s, username);			
 			Stream.sendObject(s, actual);
@@ -364,13 +364,40 @@ public class Cliente extends Observable{
 	public boolean addContact(String con) {
 		
 		try {
-			Socket s = new Socket("localhost", 2245);
+			Socket s = new Socket(HOST, 2245);
 			Stream.sendObject(s, "AMIGO");
 			Stream.sendObject(s, username);			
 			Stream.sendObject(s, con);
 			
 			
 			return Stream.receiveObject(s).equals("OK");
+		
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+	public static boolean createNewAccount(String username, String contra) {
+		try {
+			Socket s = new Socket(HOST, 2245);
+			Stream.sendObject(s, "NEW");
+			Stream.sendObject(s, username);		
+			if(Stream.receiveObject(s).equals("OK")){
+				Stream.sendObject(s, contra);
+				s.close();
+				return true;
+			}else{
+				s.close();
+				return false;
+			}
+			
 		
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

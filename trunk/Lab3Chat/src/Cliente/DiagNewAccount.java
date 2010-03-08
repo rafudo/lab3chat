@@ -13,29 +13,31 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 
-public class DiagChangePass extends JDialog implements ActionListener {
+
+public class DiagNewAccount extends JDialog implements ActionListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static boolean changed = false;
-	private static DiagChangePass diag;
+	private static boolean created = false;
+	private static DiagNewAccount diag;
 	private JButton btnChange;
 	private JButton btnCancel;
-	private JPasswordField txtActual;
-	private JPasswordField txtNueva;
+	private JTextField txtUsername;
+	private JPasswordField txtContra;
 	private JPasswordField txtConf;
-	private Cliente cliente;
+	
 
-	private DiagChangePass(InterfazCliente interfaz, Cliente cliente) {
+	private DiagNewAccount(InterfazCliente interfaz) {
 		super(interfaz, "Cambio contraseña", true);
-		this.cliente = cliente;
+		
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		btnChange = new JButton("Cambiar");
+		btnChange = new JButton("Crear");
 		btnChange.addActionListener(this);
 		btnCancel = new JButton("Cancelar");
 		btnCancel.addActionListener(this);
@@ -48,13 +50,13 @@ public class DiagChangePass extends JDialog implements ActionListener {
 			}
 			
 		};
-		JLabel labActual = new JLabel("Contraseña Actual");
-		txtActual = new JPasswordField();
-		txtActual.addActionListener(a);
-		JLabel labNueva = new JLabel("Contraseña Nueva");
+		JLabel labActual = new JLabel("Nombre de usuario");
+		txtUsername = new JTextField();
+		txtUsername.addActionListener(a);
+		JLabel labNueva = new JLabel("Contraseña");
 
-		txtNueva = new JPasswordField();
-		txtNueva.addActionListener(a);
+		txtContra = new JPasswordField();
+		txtContra.addActionListener(a);
 		JLabel labConf = new JLabel("Confirmación");
 		txtConf = new JPasswordField();
 		txtConf.addActionListener(a);
@@ -67,9 +69,9 @@ public class DiagChangePass extends JDialog implements ActionListener {
 		JPanel pc = new JPanel();
 		pc.setLayout(new GridLayout(3, 2));
 		pc.add(labActual);
-		pc.add(txtActual);
+		pc.add(txtUsername);
 		pc.add(labNueva);
-		pc.add(txtNueva);
+		pc.add(txtContra);
 		pc.add(labConf);
 		pc.add(txtConf);
 		add(pc, BorderLayout.CENTER);
@@ -77,30 +79,23 @@ public class DiagChangePass extends JDialog implements ActionListener {
 		pack();
 	}
 
-	public static boolean changePassword(InterfazCliente interfaz,
-			Cliente cliente) {
+	public static boolean createNewAccount(InterfazCliente interfaz) {
 
-		diag = new DiagChangePass(interfaz, cliente);
+		diag = new DiagNewAccount(interfaz);
 		diag.setVisible(true);
 
-		return changed;
+		return created;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		if (e.getSource().equals(btnChange)) {
-			if (txtNueva.getText().equals(txtConf.getText())) {
-				changed = cliente.changePassword(txtActual.getText(),txtNueva.getText());
-				if(changed){
-						
-					diag.dispose();	
-				}else{
-					JOptionPane.showMessageDialog(this,"La contraseña no pudo ser cambiada","Cambio contraseña", JOptionPane.ERROR_MESSAGE);
-				}
-				
+			if (txtContra.getText().equals(txtConf.getText())) {
+				created = Cliente.createNewAccount(txtUsername.getText(),txtContra.getText());				
+				diag.dispose();
 			}else{
-				JOptionPane.showMessageDialog(this,"La contraseña nueva y la confirmación, deben ser iguales","Cambio contraseña", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this,"La contraseña y la confirmación deben ser iguales","Crear cuenta", JOptionPane.ERROR_MESSAGE);
 			}
 		}else{
 			diag.dispose();

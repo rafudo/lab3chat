@@ -12,6 +12,7 @@ import javax.swing.JButton;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -59,7 +60,16 @@ public class LoginPane extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(itmCuenta)) {
-
+			if(DiagNewAccount.createNewAccount(interfaz))
+			{
+			JOptionPane
+			.showMessageDialog(this,"La cuenta fue creada exitosamente",
+					"Creación de cuenta",JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				JOptionPane
+				.showMessageDialog(this,"La cuenta no pudo ser creada",
+						"Creación de cuenta",JOptionPane.ERROR_MESSAGE);
+			}
 		} else {
 			Cliente cliente = connect(txtLogin.getText(), new String(txtPass
 					.getPassword()));
