@@ -26,17 +26,17 @@ public class ThreadReiciveFile extends Thread {
 				Stream.sendObject(in, "OK");
 				con = (String) Stream.receiveObject(in);
 				File f = new File(con);
-				if (f.exists()) {
+				
 					f = newName(f);
-				}
+				
 				FileOutputStream fos = new FileOutputStream(f);
 				InputStream is = in.getInputStream();
 				try {
-					int n;
-					do {
-						n = is.read();
+					int n = is.read();
+					while(n!=-1) {
 						fos.write(n);
-					} while (n != -1);
+						n= is.read();
+					} 
 					fos.close();
 					in.close();
 				} catch (Exception e) {
@@ -56,8 +56,12 @@ public class ThreadReiciveFile extends Thread {
 	}
 
 	private File newName(File f) {
-		// TODO Auto-generated method stub
-		return null;
+		if(f.exists()){
+			return newName(new File("N"+f.getName()));
+		}else{
+			return f;
+		}
+		
 	}
 
 }

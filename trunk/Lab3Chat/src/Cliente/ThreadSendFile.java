@@ -32,11 +32,11 @@ public class ThreadSendFile extends Thread {
 				FileInputStream fis = new FileInputStream(f);
 				OutputStream os = send.getOutputStream();
 				try {
-					int n;
-					do  {
-						System.out.println(n=fis.read());
+					int n=fis.read();
+					while(n!=-1) {						
 						os.write(n);
-					}while(n!=-1);
+						n= fis.read();
+					}
 					os.close();
 					fis.close();
 				} catch (Exception e) {
