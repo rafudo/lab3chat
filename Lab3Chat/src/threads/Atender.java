@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import conectividad.Stream;
 
 import Servidor.Grupo;
-import Servidor.PeticionAmigo;
+
 import Servidor.Servidor;
 import Servidor.Usuario;
 
@@ -199,10 +199,11 @@ public class Atender extends Thread {
 	private void pass() throws Exception {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		
+
 		if (((String) Stream.receiveObject(cliente)).equals(user.getPass())) {
 			try {
-				Servidor.changePass(user, (String) Stream.receiveObject(cliente));
+				Servidor.changePass(user, (String) Stream
+						.receiveObject(cliente));
 			} catch (Exception e) {
 				Stream.sendObject(cliente, "ERROR");
 			}
@@ -244,11 +245,63 @@ public class Atender extends Thread {
 		Usuario amigo = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
 
-		if (amigo != null) {
-			PeticionAmigo temp = new PeticionAmigo(user.getLog(), amigo
-					.getLog());
-			Servidor.addFriendRequest(temp);
+		if (amigo != null && user != null) {
+			Servidor.addFriendToUser(user, amigo);
 			Stream.sendObject(cliente, "OK");
+			if (Servidor.isConnected(user.getLog())) {
+				try {
+
+					Socket cliente = new Socket(user.getIP(), user.getPort());
+					Stream.sendObject(cliente, "CAMBIO");
+
+					String conectado = "NO";
+
+					if (Servidor.isConnected(amigo.getLog()))
+						conectado = "SI";
+					Stream.sendObject(cliente, amigo.getLog());
+					Stream.sendObject(cliente, conectado);
+					Stream.sendObject(cliente, amigo.getFrase());
+					if (conectado.equals("SI")) {
+						Stream.sendObject(cliente, amigo.getIP());
+						Stream.sendObject(cliente, amigo.getPort());
+					} else {
+						Stream.sendObject(cliente, "0");
+						Stream.sendObject(cliente, 0);
+					}
+
+					cliente.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				if (Servidor.isConnected(amigo.getLog())) {
+					try {
+
+						Socket cliente = new Socket(amigo.getIP(), amigo
+								.getPort());
+						Stream.sendObject(cliente, "CAMBIO");
+
+						String conectado = "NO";
+
+						if (Servidor.isConnected(user.getLog()))
+							conectado = "SI";
+						Stream.sendObject(cliente, user.getLog());
+						Stream.sendObject(cliente, conectado);
+						Stream.sendObject(cliente, user.getFrase());
+						if (conectado.equals("SI")) {
+							Stream.sendObject(cliente, user.getIP());
+							Stream.sendObject(cliente, user.getPort());
+						} else {
+							Stream.sendObject(cliente, "0");
+							Stream.sendObject(cliente, 0);
+						}
+
+						cliente.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		} else
 			Stream.sendObject(cliente, "ERROR");
 	}

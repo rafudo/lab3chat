@@ -27,6 +27,8 @@ public class ThreadNotificaciones extends Thread {
 
 			} else if (line.equals("CONFAMIGO")) {
 
+			}else if(line.equals("FILE")){
+				reiciveFile();
 			}
 		} catch (IOException e) {
 
@@ -36,6 +38,12 @@ public class ThreadNotificaciones extends Thread {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void reiciveFile() {
+		
+		(new ThreadReiciveFile(in,me)).start();
+		
 	}
 
 	private void assignChat() {
