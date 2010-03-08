@@ -21,10 +21,7 @@ public class Grupo implements Serializable
 	 */
 	private String owner;
 	
-	/**
-	 * Lista de Usuarios inscritos al grupo.
-	 */
-	private ArrayList<String> gente;
+	
 	
 	/**
 	 * IP tipo D del grupo.
@@ -39,8 +36,7 @@ public class Grupo implements Serializable
 	{
 		owner = nOwner;
 		ip = nIp;
-		gente = new ArrayList<String>();
-		gente.add(owner);
+		
 	}
 	
 	// Metodos
@@ -61,35 +57,14 @@ public class Grupo implements Serializable
 		return ip;
 	}
 	
-	/**
-	 * Agrega un usuario al grupo.
-	 */
-	public void add(String log)
-	{
-		gente.add(log);
-	}
-	
-	/**
-	 * Retorna la lista de inscritos al grupo.
-	 */
-	public ArrayList<String> darGente()
-	{
-		return gente;
-	}
 	
 	/**
 	 * Compara 2 grupos
 	 */
 	public boolean equals(Object arg0)
 	{
-		return owner.equals(((Grupo)arg0).owner);
+		return ip.equals(((Grupo)arg0).getIp());
 	}
 	
-	/**
-	 * Remueve un usuario del grupo
-	 */
-	public void remover(String log)
-	{
-		gente.remove(log);
-	}
+	
 }

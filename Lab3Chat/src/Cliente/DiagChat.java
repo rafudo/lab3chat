@@ -74,8 +74,10 @@ public class DiagChat extends JFrame implements ActionListener {
 	@Override
 	public void dispose() {
 
+		int r=JOptionPane.showConfirmDialog(this, "Desea guardar la conversación?", "Guardar conversación", JOptionPane.YES_NO_OPTION);
+		contacto.close(r==JOptionPane.YES_OPTION);
+		
 		super.dispose();
-		contacto.close();
 		contacto.setWindow(null);
 	}
 

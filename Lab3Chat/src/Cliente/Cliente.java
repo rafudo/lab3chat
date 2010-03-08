@@ -200,10 +200,10 @@ public class Cliente extends Observable{
 		while(i < grupos.size())
 		{
 			lista += "Grupo de " + grupos.get(i).getOwner() + ":/n";
-			for(String inscrito: grupos.get(i).darGente())
+			/*for(String inscrito: grupos.get(i).darGente())
 				lista += "- " + inscrito + "/n";
 			lista += "/n";
-			i++;
+			i++;*/
 		}
 		return lista;
 	}
@@ -211,6 +211,7 @@ public class Cliente extends Observable{
 	/**
 	 * Retorna un lista de todos los grupos.
 	 */
+	/*
 	public String darListadoGruposTodos()
 	{
 		try
@@ -239,7 +240,7 @@ public class Cliente extends Observable{
 			e.printStackTrace();
 			return "Error al comunicarse con el servidor.";
 		}
-	}
+	}*/
 	
 	/**
 	 * Crea un grupo.
@@ -312,6 +313,7 @@ public class Cliente extends Observable{
 	/**
 	 * Unirse a un grupo.
 	 */
+	/*
 	public String unirseGrupo(String idGrupo)
 	{
 		if(gruposTodos == null)
@@ -338,7 +340,7 @@ public class Cliente extends Observable{
 			return "Error al comunicarse con el servidor.";
 		}
 	}
-
+*/
 	public boolean changePassword(String actual, String nueva) {
 		try {
 			Socket s = new Socket(HOST, 2245);
