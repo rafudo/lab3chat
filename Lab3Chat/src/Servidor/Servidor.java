@@ -379,4 +379,47 @@ public class Servidor {
 		
 		servidor.grupos.remove(g);
 	}
+
+	public static void leaveGroup(Usuario user, String ip) {
+		if (servidor == null) {
+			servidor = new Servidor();
+			servidor.loadServer();
+		}
+		try {
+			user.getGrupos().remove(ip);
+			ObjectOutputStream oos = new ObjectOutputStream(
+					new FileOutputStream(LOGS + user.getLog()));
+			oos.writeObject(user);
+			oos.close();
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		
+	}
+
+	public static void joinGroup(Usuario user, String ip) {
+		if (servidor == null) {
+			servidor = new Servidor();
+			servidor.loadServer();
+		}
+		try {
+			if(!user.getGrupos().contains(ip))
+			user.getGrupos().add(ip);
+			ObjectOutputStream oos = new ObjectOutputStream(
+					new FileOutputStream(LOGS + user.getLog()));
+			oos.writeObject(user);
+			oos.close();
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		
+	}
 }
