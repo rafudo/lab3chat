@@ -274,25 +274,17 @@ public class Cliente extends Observable{
 	/**
 	 * Unirse a un grupo.
 	 */
-	/*
-	public String unirseGrupo(String idGrupo)
-	{
-		if(gruposTodos == null)
-			darListadoGruposTodos();
-		
-		Grupo g = gruposTodos.get(gruposTodos.indexOf(new Grupo(idGrupo, null)));
-		
-		if(g == null)
-			return "El grupo especificado no existe.";
-		
+	
+	public String unirseGrupo(Grupo g)
+	{	
 		try
 		{
 			Socket s = new Socket(HOST, 2245);
 			Stream.sendObject(s, "UNIR GRUPO");
 			Stream.sendObject(s, username);
-			Stream.sendObject(s, g);
+			Stream.sendObject(s, g.getIp());
 			
-			grupos.add(g);
+			grupos.put(g.getId(), g);
 			return (String)Stream.receiveObject(s);
 		}
 		catch(Exception e)
@@ -301,7 +293,7 @@ public class Cliente extends Observable{
 			return "Error al comunicarse con el servidor.";
 		}
 	}
-*/
+
 	public boolean changePassword(String actual, String nueva) {
 		try {
 			Socket s = new Socket(HOST, 2245);
