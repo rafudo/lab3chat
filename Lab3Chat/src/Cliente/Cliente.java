@@ -184,41 +184,37 @@ public class Cliente extends Observable{
 	/**
 	 * Retorna un lista de todos los grupos.
 	 */
-	/*
-	public String darListadoGruposTodos()
+	
+	public Hashtable<String, Grupo> getGroupList()
 	{
 		try
 		{
 			Socket s = new Socket(HOST, 2245);
-			Stream.sendObject(s, "LISTA GRUPO");
-			gruposTodos = (ArrayList<Grupo>)Stream.receiveObject(s);
-			
-			int i = 0;
-			
-			String lista = gruposTodos.size() + " grupos./n/n";
-			
-			while(i < gruposTodos.size())
-			{
-				lista += "Grupo de " + gruposTodos.get(i).getOwner() + ":/n";
-				for(String inscrito: gruposTodos.get(i).darGente())
-					lista += "- " + inscrito + "/n";
-				lista += "/n";
-				i++;
+			Stream.sendObject(s, "LISTGRUPO");
+			int ng = Integer.parseInt((String)Stream.receiveObject(s));
+			Hashtable<String, Grupo>grups = new Hashtable<String, Grupo>();
+			for(int i=0;i<ng;i++){
+				String own = (String)Stream.receiveObject(s);
+				String ip = (String)Stream.receiveObject(s);
+				String id = (String)Stream.receiveObject(s);
+				Grupo g = new Grupo(own, ip, id);
+				grups.put(g.getIp(), g);
 			}
+			return grups;
 			
-			return lista;
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			return "Error al comunicarse con el servidor.";
+			
 		}
-	}*/
+		return new Hashtable<String, Grupo>();
+	}
 	
 	/**
 	 * Crea un grupo.
 	 */
-	public String createGroup(String nombre)
+	public boolean createGroup(String nombre)
 	{
 		try
 		{
@@ -231,60 +227,48 @@ public class Cliente extends Observable{
 			
 			if(respuesta.equals("ERROR")){
 				s.close();
-				return "No se pudo crear el grupo "+nombre;
+				return false;
 			}else
 			{
 				String ip = (String)Stream.receiveObject(s);
 				Grupo g = new Grupo(username, ip, nombre);
 				grupos.put(ip,g);
 				s.close();
-				return "Se creo su grupo de forma exitosa.";
+				return true;
 			}
 			
 		}
 		catch(Exception e){
 			e.printStackTrace();
-			return "Error al comunicarse con el servidor.";
+			return false;
 		}
 	}
 	
 	/**
 	 * Salirse de un grupo, en caso que el usuario sea el dueno del grupo, se elimina el grupo.
 	 */
-	public String salirGrupo(String idGrupo)
+	public boolean leaveGroup(String idGrupo)
 	{
-		int j = 0;
-		Grupo g = null;
-		
-		while(j < grupos.size())
+		try
 		{
-			if(grupos.get(j).getOwner().equals(idGrupo))
-				g = grupos.get(j);
+			Socket s = new Socket(HOST, 2245);
+			Stream.sendObject(s, "LEAVEGRUPO");
+			Stream.sendObject(s, username);
+			Stream.sendObject(s, idGrupo);			
 			
-			j++;
+			
+			
+			grupos.remove(idGrupo);
+			s.close();
+			return true;
+			
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return false;
 		}
 		
-		if(g == null)
-			return "Usted no hace parte del grupo especificado.";
-		else
-		{
-			try
-			{
-				Socket s = new Socket(HOST, 2245);
-				Stream.sendObject(s, "SALIR GRUPO");
-				Stream.sendObject(s, username);
-				Stream.sendObject(s, g);
-				
-				String respuesta = (String)Stream.receiveObject(s);
-				
-				return respuesta;
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-				return "Error al comunicarse con el servidor.";
-			}
-		}
 	}
 	
 	/**
