@@ -1,16 +1,15 @@
 package threads;
 
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
+
 import java.net.Socket;
-import java.util.ArrayList;
+
 import java.util.Hashtable;
 
 import conectividad.Stream;
 
 import Servidor.Grupo;
+
 
 import Servidor.Servidor;
 import Servidor.Usuario;
@@ -62,11 +61,11 @@ public class Atender extends Thread {
 				newAccount();
 			} else if (line.equals("UNIR GRUPO")) {
 				unirGrupo();
-			}/* else if (line.equals("SALIR GRUPO")) {
+			} else if (line.equals("SALIR GRUPO")) {
 				salirGrupo();
-			} */else if (line.equals("CREAR GRUPO")) {
+			} else if (line.equals("NEWGRUPO")) {
 				crearGrupo();
-			} else if (line.equals("LISTA GRUPO")) {
+			} else if (line.equals("LISTGRUPO")) {
 				listaGrupos();
 			}
 
@@ -77,6 +76,8 @@ public class Atender extends Thread {
 		}
 
 	}
+
+	
 
 	/**
 	 * Crea un nuevo usuario
@@ -145,7 +146,18 @@ public class Atender extends Thread {
 			n = user.getGrupos().size();
 			Stream.sendObject(cliente, "" + n);
 			for (int i = 0; i < n; i++) {
-				Stream.sendObject(cliente, user.getGrupos().get(n));
+				String ip = user.getGrupos().get(n);
+				Grupo g = Servidor.getGrupos().get(ip);
+				if(g!=null){
+					Stream.sendObject(cliente, g.getOwner());
+					Stream.sendObject(cliente, ip);
+					Stream.sendObject(cliente, g.getId());
+				}else{
+					Stream.sendObject(cliente, "");
+					Stream.sendObject(cliente, "D"+ip);
+					Stream.sendObject(cliente, "");
+				}
+				
 			}
 
 			user.setIP((String) Stream.receiveObject(cliente));
@@ -333,10 +345,8 @@ public class Atender extends Thread {
 	private void unirGrupo() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		String ip = (String) Stream.receiveObject(cliente);
-		
-		user.addGrupo(ip);
-		Servidor.changeFrase(user, user.getFrase());
+		String ip = (String) Stream.receiveObject(cliente);		
+		Servidor.joinGroup(user, ip);
 		Stream.sendObject(cliente, "OK");
 	}
 
@@ -371,34 +381,14 @@ public class Atender extends Thread {
 
 	/**
 	 * Desea salirse de un grupo.
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
 	 */
-	/*private void salirGrupo() throws IOException, ClassNotFoundException {
-		Usuario user = Servidor.getUsuario((String) Stream
-				.receiveObject(cliente));
-		Grupo g = (Grupo) Stream.receiveObject(cliente);
-
-		if (g.getOwner().equals(user.getLog())) {
-			for (String inscrito : ) {
-				Usuario ins = Servidor.getUsuario(inscrito);
-				ins.removeGrupo(g);
-				Servidor.changeFrase(ins, ins.getFrase());
-			}
-
-			MulticastSocket m = new MulticastSocket(2015);
-			m.joinGroup(g.getIp());
-			String notif = "Este grupo fue cerrado a peticion del creador.";
-			DatagramPacket msg = new DatagramPacket(notif.getBytes(), notif
-					.length(), g.getIp(), 2015);
-			m.send(msg);
-			m.leaveGroup(g.getIp());
-			m.close();
-
-			Servidor.removerGrupo(g);
-		} else
-			Servidor.removerDelGrupo(g, user);
-
-		Stream.sendObject(cliente, "OK");
-	}*/
+	private void salirGrupo() throws IOException, ClassNotFoundException {
+		Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
+		String ip =(String)Stream.receiveObject(cliente);
+		Servidor.leaveGroup(user,ip);
+	}
 
 	/**
 	 * Desea un listado de grupos
