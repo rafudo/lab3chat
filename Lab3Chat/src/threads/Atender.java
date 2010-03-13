@@ -371,8 +371,8 @@ public class Atender extends Thread {
 			Stream.sendObject(cliente, ip);
 			
 			Grupo group = new Grupo(user.getLog(), ip,nombre);
-			list.put(ip, group);
-			user.addGrupo(ip);				
+			Servidor.addGrupo(group);
+			Servidor.joinGroup(user, ip);			
 			Stream.sendObject(cliente, "OK");
 				
 			
