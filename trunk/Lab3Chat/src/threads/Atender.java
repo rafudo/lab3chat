@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import conectividad.Stream;
 
@@ -84,7 +85,7 @@ public class Atender extends Thread {
 		try {
 			String login = (String) Stream.receiveObject(cliente);
 
-			if (!Servidor.exist(login)) {
+			if (!Servidor.exists(login)) {
 				Stream.sendObject(cliente, "OK");
 				String pss = (String) Stream.receiveObject(cliente);
 
@@ -154,7 +155,7 @@ public class Atender extends Thread {
 			Servidor.addConnected(user);
 
 			for (int i = 0; i < user.amigos.size(); i++) {
-				(new FriendStatusChanged(user.amigos.get(i), user)).start();
+				informar(user.amigos.get(i), user);
 			}
 			
 
@@ -162,6 +163,35 @@ public class Atender extends Thread {
 		} else {
 			Stream.sendObject(cliente, "ERROR");
 			return false;
+		}
+	}
+	private void informar(String destiny, Usuario source){
+		if (Servidor.isConnected(destiny)) {
+			System.out.println("Esta enviando las notificaciones");
+			try {
+				Usuario user = Servidor.getUsuario(destiny);
+				Socket cliente = new Socket(user.getIP(), user.getPort());
+				Stream.sendObject(cliente, "CAMBIO");
+
+				String conectado = "NO";
+
+				if (Servidor.isConnected(source.getLog()))
+					conectado = "SI";
+				Stream.sendObject(cliente, source.getLog());
+				Stream.sendObject(cliente, conectado);
+				Stream.sendObject(cliente, source.getFrase());
+				if (conectado.equals("SI")) {
+					Stream.sendObject(cliente, source.getIP());
+					Stream.sendObject(cliente, source.getPort());
+				} else {
+					Stream.sendObject(cliente, "0");
+					Stream.sendObject(cliente, 0);
+				}
+
+				cliente.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -178,7 +208,7 @@ public class Atender extends Thread {
 		Stream.sendObject(cliente, "CHAO");
 
 		for (int i = 0; i < user.amigos.size(); i++) {
-			(new FriendStatusChanged(user.amigos.get(i), user)).start();
+			informar(user.amigos.get(i), user);
 		}
 
 	}
@@ -222,7 +252,7 @@ public class Atender extends Thread {
 		} else
 			Stream.sendObject(cliente, "ERROR");
 		for (int i = 0; i < user.amigos.size(); i++) {
-			(new FriendStatusChanged(user.amigos.get(i), user)).start();
+			informar(user.amigos.get(i), user);
 		}
 	}
 
@@ -303,9 +333,9 @@ public class Atender extends Thread {
 	private void unirGrupo() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		Grupo g = (Grupo) Stream.receiveObject(cliente);
+		String ip = (String) Stream.receiveObject(cliente);
 		
-		user.addGrupo(g);
+		user.addGrupo(ip);
 		Servidor.changeFrase(user, user.getFrase());
 		Stream.sendObject(cliente, "OK");
 	}
@@ -316,50 +346,27 @@ public class Atender extends Thread {
 	private void crearGrupo() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
+		String nombre  = (String) Stream.receiveObject(cliente);
 
-		ArrayList<Grupo> list = Servidor.darGrupos();
-		if (list.contains(new Grupo(user.getLog(), null))) {
-			Stream.sendObject(cliente, "ERROR");
-		} else {
-			int num1 = (int) Math.random() * 255;
-			int num2 = (int) Math.random() * 255;
-
-			InetAddress addr = InetAddress.getByName("230.255." + num1 + "."
-					+ num2);
-
-			if (list.isEmpty()) {
-				Grupo group = new Grupo(user.getLog(), addr);
-				user.addGrupo(group);
-				Servidor.changeFrase(user, user.getFrase());
-				Servidor.addGrupo(group);
-				Stream.sendObject(cliente, "OK");
-				Stream.sendObject(cliente, group);
-			} else {
-				int p = 0;
-				Grupo group = list.get(p);
-				int fin = list.size();
-
-				while (p < fin) {
-					p++;
-					if (group.getIp().equals(addr)) {
-						p = 0;
-						num1 = (int) Math.random() * 255;
-						num2 = (int) Math.random() * 255;
-						addr = InetAddress.getByName("230.255." + num1 + "."
-								+ num2);
-					}
-
-					group = list.get(p);
-				}
-
-				group = new Grupo(user.getLog(), addr);
-				user.addGrupo(group);
-				Servidor.changeFrase(user, user.getFrase());
-				Servidor.addGrupo(group);
-				Stream.sendObject(cliente, "OK");
-				Stream.sendObject(cliente, group);
+		Hashtable<String, Grupo> list = Servidor.getGrupos();
+		
+			int num1 = (int) Math.random() * 256;
+			int num2 = (int) Math.random() * 256;
+			while(list.containsKey("239.233."+num1+"."+num2)){
+				num1 = (int) Math.random() * 256;
+				num2 = (int) Math.random() * 256;
 			}
-		}
+			Stream.sendObject(cliente, "OK");
+			String ip="239.233."+num1+"."+num2;
+			Stream.sendObject(cliente, ip);
+			
+			Grupo group = new Grupo(user.getLog(), ip,nombre);
+			list.put(ip, group);
+			user.addGrupo(ip);				
+			Stream.sendObject(cliente, "OK");
+				
+			
+		
 	}
 
 	/**
@@ -396,8 +403,17 @@ public class Atender extends Thread {
 	/**
 	 * Desea un listado de grupos
 	 */
-	private void listaGrupos() throws IOException, ClassNotFoundException {
-		Stream.sendObject(cliente, Servidor.darGrupos());
+	private void listaGrupos() throws IOException{
+		Grupo[] grups=(Grupo[]) Servidor.getGrupos().values().toArray();
+		Stream.sendObject(cliente, ""+grups.length);
+		for(int i=0;i<grups.length;i++){
+			Grupo g = grups[i];
+			Stream.sendObject(cliente, g.getOwner());
+			Stream.sendObject(cliente, g.getIp());
+			Stream.sendObject(cliente, g.getId());
+		}
+		
 	}
 
 }
+

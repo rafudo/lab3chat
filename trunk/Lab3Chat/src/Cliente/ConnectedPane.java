@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -25,6 +26,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
+import Servidor.Grupo;
+
 public class ConnectedPane extends JTabbedPane implements Observer,
 		ActionListener {
 
@@ -33,6 +36,7 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel panelContactos;
+	private JPanel panelGrupos;
 	private JList lstContactos;
 	private InterfazCliente interfaz;
 	private Cliente cliente;
@@ -41,6 +45,7 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 	private JMenuItem itmCerrar;
 	private JMenuItem itmCambiar;
 	private JMenuItem itmAgregar;
+	private JList lstGrupos;
 	public ConnectedPane(InterfazCliente interfazCliente, Cliente client) {
 		interfaz = interfazCliente;
 		
@@ -73,7 +78,7 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 		nickLab.addActionListener(this);
 		panelNorte.add(usernameLab,BorderLayout.CENTER);
 		panelNorte.add(nickLab,BorderLayout.SOUTH);
-		addTab("Contactos", panelContactos);
+	
 		lstContactos = new JList();
 		lstContactos.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -91,11 +96,30 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 
 		cliente.addObserver(this);
 		lstContactos.setListData(cliente.getContacts().values().toArray());
-		JScrollPane sp = new JScrollPane();
-		sp.setViewportView(lstContactos);
-		panelContactos.add(sp, BorderLayout.CENTER);
+		JScrollPane spc = new JScrollPane();
+		spc.setViewportView(lstContactos);
+		panelContactos.add(spc, BorderLayout.CENTER);
 		panelContactos.add(panelNorte, BorderLayout.NORTH);
 		
+		panelGrupos= new JPanel();
+		panelGrupos.setLayout(new GridLayout(2,1));
+		JScrollPane spg = new JScrollPane();
+		lstGrupos= new JList();
+		lstGrupos.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int index = lstGrupos.locationToIndex(e.getPoint());
+					Grupo g = (Grupo) lstGrupos.getModel()
+							.getElementAt(index);
+
+					
+
+				}
+			}
+		});
+		lstContactos.setListData(cliente.getGrupos().values().toArray());
+		spg.setViewportView(lstGrupos);
+		addTab("Contactos", panelContactos);
 
 	}
 

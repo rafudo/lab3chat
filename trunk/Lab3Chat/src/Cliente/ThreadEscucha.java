@@ -15,7 +15,7 @@ public class ThreadEscucha extends Thread {
 	@Override
 	public void run() {
 		try {
-			ServerSocket s = new ServerSocket(me.darPort());
+			ServerSocket s = new ServerSocket(me.getPort());
 			while(true){
 				Socket in=s.accept();
 				(new ThreadNotificaciones(me,in)).start();

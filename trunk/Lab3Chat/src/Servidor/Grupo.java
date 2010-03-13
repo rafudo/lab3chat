@@ -1,8 +1,6 @@
 package Servidor;
 
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.ArrayList;
 
 /**
  * Representa un grupo de chat.
@@ -21,21 +19,24 @@ public class Grupo implements Serializable
 	 */
 	private String owner;
 	
-	
-	
+	/**
+	 * nombre del grupo
+	 */	
+	private String id;
 	/**
 	 * IP tipo D del grupo.
 	 */
-	private InetAddress ip;
+	private String ip;
 	
 	// Constructor
 	/**
 	 * Crea una instancia de la clase.
 	 */
-	public Grupo(String nOwner, InetAddress nIp)
+	public Grupo(String nOwner, String nIp, String nombre)
 	{
 		owner = nOwner;
 		ip = nIp;
+		id=nombre;
 		
 	}
 	
@@ -52,7 +53,7 @@ public class Grupo implements Serializable
 	/**
 	 * Retorna la ip del grupo
 	 */
-	public InetAddress getIp()
+	public String getIp()
 	{
 		return ip;
 	}
@@ -65,6 +66,13 @@ public class Grupo implements Serializable
 	{
 		return ip.equals(((Grupo)arg0).getIp());
 	}
+
+	public String getId() {
+
+		return id;
+	}
+	
+	
 	
 	
 }

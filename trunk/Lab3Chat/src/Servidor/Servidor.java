@@ -44,7 +44,7 @@ public class Servidor {
 	/**
 	 * Lista de grupos
 	 */
-	private ArrayList<Grupo> grupos;
+	private Hashtable<String, Grupo> grupos;
 
 	// Constructor
 	/**
@@ -56,7 +56,7 @@ public class Servidor {
 
 		conectados = new Hashtable<String, Usuario>();
 		
-		grupos = new ArrayList<Grupo>();
+		grupos = new Hashtable<String, Grupo>();
 	}
 
 	// Metodos
@@ -96,7 +96,7 @@ public class Servidor {
 
 		if (servidor.conectados.containsKey(log)) {
 			return servidor.conectados.get(log);
-		} else if (exist(log)) {
+		} else if (exists(log)) {
 			Usuario user = null;
 			ObjectInputStream ois;
 			try {
@@ -177,11 +177,11 @@ public class Servidor {
 			if (!f.exists()) 
 			{
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
-				grupos = (ArrayList<Grupo>) ois.readObject();
+				grupos = (Hashtable<String, Grupo>) ois.readObject();
 				ois.close();
 			}
 			else
-				grupos = new ArrayList<Grupo>();
+				grupos = new Hashtable<String, Grupo>();
 			
 
 		} catch (Exception e) {
@@ -328,7 +328,7 @@ public class Servidor {
 			servidor.loadServer();
 		}
 		
-		servidor.grupos.add(g);
+		servidor.grupos.put(g.getIp(),g);
 		
 		try
 		{	
@@ -346,7 +346,7 @@ public class Servidor {
 	/**
 	 * Retorna los grupos
 	 */
-	public static ArrayList<Grupo> darGrupos()
+	public static Hashtable<String, Grupo> getGrupos()
 	{
 		if (servidor == null) {
 			servidor = new Servidor();
@@ -357,7 +357,7 @@ public class Servidor {
 	}
 	
 	
-	public static boolean exist(String login) {
+	public static boolean exists(String login) {
 		if (servidor == null) {
 			servidor = new Servidor();
 			servidor.loadServer();
