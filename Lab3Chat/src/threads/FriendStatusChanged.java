@@ -11,7 +11,7 @@ public class FriendStatusChanged extends Thread {
 	private Usuario source;
 	private String destiny;
 
-	public FriendStatusChanged(String dst, Usuario src) {
+	public FriendStatusChanged(String dst, Usuario src, int f) {
 		source = src;
 		destiny = dst;
 	}

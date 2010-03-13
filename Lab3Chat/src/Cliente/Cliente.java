@@ -22,23 +22,17 @@ public class Cliente extends Observable{
 	public final static String HOST = "localhost";
 	
 	private Hashtable<String,Contacto> contactos;
-	private Vector<Grupo> grupos;
+	private Hashtable<String,Grupo> grupos;
 	private String frase;
 	private String username;
 	private String password;
 	private int port;
 	private ThreadEscucha escucha;
-	/**
-	 * Grupo del usuario.
-	 */
-	private Grupo group;
-	
-	/**
-	 * Todos los grupos
-	 */
-	private ArrayList<Grupo> gruposTodos;
 
-	private Cliente(String username, String password,Hashtable<String,Contacto> contacts, Vector<Grupo> grupos,
+	
+	
+
+	private Cliente(String username, String password,Hashtable<String,Contacto> contacts, Hashtable<String,Grupo> grupos,
 			String frase, int port)  {
 		this.username=username;
 		contactos = contacts;
@@ -49,14 +43,7 @@ public class Cliente extends Observable{
 		escucha=new ThreadEscucha(this);
 		escucha.start();
 		
-		int n = 0;
-		while(n < grupos.size())
-		{
-			if(grupos.get(n).getOwner().equals(username))
-				group = grupos.get(n);
-			
-			n++;
-		}
+		this.grupos=grupos;
 		
 	}
 	
@@ -68,7 +55,7 @@ public class Cliente extends Observable{
 			Stream.sendObject(s, "CHAO");
 			Stream.sendObject(s, username);
 			Stream.receiveObject(s);
-		
+			s.close();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -93,7 +80,7 @@ public class Cliente extends Observable{
 	public static Cliente createClient(String username, String password) throws UnknownHostException,
 			IOException, ClassNotFoundException {
 		Hashtable<String,Contacto> contactos = new Hashtable<String,Contacto>();
-		Vector<Grupo> grupos = new Vector<Grupo>();
+		Hashtable<String,Grupo> grupos = new Hashtable<String,Grupo>();
 		String frase = "";
 	
 		Socket s = new Socket(HOST, 2245);
@@ -120,7 +107,11 @@ public class Cliente extends Observable{
 			
 			for (int i = 0; i < n; i++) 
 			{
-				grupos.add((Grupo)Stream.receiveObject(s));
+				String own = (String)Stream.receiveObject(s);
+				String ip = (String)Stream.receiveObject(s);
+				String id = (String)Stream.receiveObject(s);
+				Grupo g = new Grupo(own, ip, id);
+				grupos.put(g.getIp(),g);
 			}
 			int port=Stream.findFreePort(1000,2000);
 			try
@@ -161,7 +152,7 @@ public class Cliente extends Observable{
 			Stream.sendObject(s, password);
 			Stream.sendObject(s, text);
 			Stream.receiveObject(s);
-		
+			s.close();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -173,7 +164,7 @@ public class Cliente extends Observable{
 		
 	}
 
-	public int darPort() {
+	public int getPort() {
 		return port;
 	}
 
@@ -188,25 +179,7 @@ public class Cliente extends Observable{
 		
 	}
 
-	/**
-	 * Retorna un listado de grupos a los que se esta inscrito.
-	 */
-	public String darListadoGruposInscritos()
-	{	
-		int i = 0;
-		
-		String lista = "Usted hace parte de " + grupos.size() + " grupos./n/n";
-		
-		while(i < grupos.size())
-		{
-			lista += "Grupo de " + grupos.get(i).getOwner() + ":/n";
-			/*for(String inscrito: grupos.get(i).darGente())
-				lista += "- " + inscrito + "/n";
-			lista += "/n";
-			i++;*/
-		}
-		return lista;
-	}
+	
 	
 	/**
 	 * Retorna un lista de todos los grupos.
@@ -245,25 +218,29 @@ public class Cliente extends Observable{
 	/**
 	 * Crea un grupo.
 	 */
-	public String crearGrupo()
+	public String createGroup(String nombre)
 	{
 		try
 		{
 			Socket s = new Socket(HOST, 2245);
-			Stream.sendObject(s, "CREAR GRUPO");
+			Stream.sendObject(s, "NEWGRUPO");
 			Stream.sendObject(s, username);
+			Stream.sendObject(s, nombre);
 			
 			String respuesta = (String)Stream.receiveObject(s);
 			
-			if(respuesta.equals("ERROR"))
-				return "Usted ya tiene un grupo creado bajo su nombre.";
-			else
+			if(respuesta.equals("ERROR")){
+				s.close();
+				return "No se pudo crear el grupo "+nombre;
+			}else
 			{
-				Grupo g = (Grupo)Stream.receiveObject(s);
-				grupos.add(g);
-				group = g;
+				String ip = (String)Stream.receiveObject(s);
+				Grupo g = new Grupo(username, ip, nombre);
+				grupos.put(ip,g);
+				s.close();
 				return "Se creo su grupo de forma exitosa.";
 			}
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -348,8 +325,9 @@ public class Cliente extends Observable{
 			Stream.sendObject(s, username);			
 			Stream.sendObject(s, actual);
 			Stream.sendObject(s, nueva);
-			
-			return Stream.receiveObject(s).equals("OK");
+			boolean b =Stream.receiveObject(s).equals("OK");
+			s.close();
+			return b;
 		
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -370,9 +348,9 @@ public class Cliente extends Observable{
 			Stream.sendObject(s, "AMIGO");
 			Stream.sendObject(s, username);			
 			Stream.sendObject(s, con);
-			
-			
-			return Stream.receiveObject(s).equals("OK");
+			boolean b =Stream.receiveObject(s).equals("OK");
+			s.close();
+			return b;
 		
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -410,6 +388,12 @@ public class Cliente extends Observable{
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+
+	public Hashtable<String, Grupo> getGrupos() {
+		
+		return grupos;
 	}
 	
 	
