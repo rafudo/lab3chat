@@ -378,6 +378,17 @@ public class Servidor {
 		}
 		
 		servidor.grupos.remove(g);
+		
+		try
+		{	
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(GRUPOS));
+			oos.writeObject(servidor.grupos);
+			oos.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public static void leaveGroup(Usuario user, String ip) {
