@@ -57,7 +57,9 @@ public class ThreadListenGroups extends Thread {
 	}
 
 	public void leaveGroup(String ip) throws UnknownHostException, IOException {
-		in.leaveGroup(InetAddress.getByName(ip));		
+		try{
+		in.leaveGroup(InetAddress.getByName(ip));
+		}catch(Exception e){e.printStackTrace();}
 		
 	}
 
