@@ -24,6 +24,7 @@ public class InterfazCliente extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("Mazinger");
 		setSize(500, 500);
+		setResizable(false);
 		setJMenuBar(new JMenuBar());
 		
 		LoginPane loginPane = new LoginPane(this);
@@ -63,7 +64,9 @@ public class InterfazCliente extends JFrame {
 		getContentPane().removeAll();
 		
 		System.gc();
-		add(new ConnectedPane(this,cliente));
+		ConnectedPane p = new ConnectedPane(this,cliente);
+		cliente.setPanel(p);
+		add(p);
 		paintAll(getGraphics())	;
 		
 		
