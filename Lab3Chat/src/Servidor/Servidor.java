@@ -386,6 +386,11 @@ public class Servidor {
 					new FileOutputStream(LOGS + user.getLog()));
 			oos.writeObject(user);
 			oos.close();
+			if(servidor.grupos.get(ip).getOwner().equals(user.getLog())){
+				System.out.println("ASDQEIEHGOAERIGHOAWRE");
+				servidor.grupos.remove(ip);
+				saveGroups();
+			}
 			return true;
 		} catch (FileNotFoundException e) {
 

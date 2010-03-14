@@ -33,6 +33,7 @@ public class DiagChangePass extends JDialog implements ActionListener {
 	private DiagChangePass(InterfazCliente interfaz, Cliente cliente) {
 		super(interfaz, "Cambio contraseña", true);
 		this.cliente = cliente;
+		changed=false;
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		btnChange = new JButton("Cambiar");

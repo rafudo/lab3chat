@@ -35,6 +35,7 @@ public class DiagJoinGroup extends JDialog implements ActionListener {
 	private DiagJoinGroup(InterfazCliente interfaz, Cliente cliente) {
 		super(interfaz, "Unirse a un grupo", true);
 		this.cliente = cliente;
+		changed=false;
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		btnChange = new JButton("Unirse");
