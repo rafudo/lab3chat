@@ -165,16 +165,11 @@ public class Servidor {
 			config.load(new FileInputStream(CONFIG));
 
 			server = new ServerSocket(Integer.parseInt(config
-					.getProperty("puerto")));
-
-			// Llena la list de peticiones pendientes
-			
-			
-			// Carga los grupos.
+					.getProperty("puerto")));		
 			
 			File f = new File(GRUPOS);
 			
-			if (!f.exists()) 
+			if (f.exists()) 
 			{
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
 				grupos = (Hashtable<String, Grupo>) ois.readObject();
@@ -378,20 +373,9 @@ public class Servidor {
 		}
 		
 		servidor.grupos.remove(g);
-		
-		try
-		{	
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(GRUPOS));
-			oos.writeObject(servidor.grupos);
-			oos.close();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 
-	public static void leaveGroup(Usuario user, String ip) {
+	public static boolean leaveGroup(Usuario user, String ip) {
 		if (servidor == null) {
 			servidor = new Servidor();
 			servidor.loadServer();
@@ -402,27 +386,56 @@ public class Servidor {
 					new FileOutputStream(LOGS + user.getLog()));
 			oos.writeObject(user);
 			oos.close();
+			return true;
 		} catch (FileNotFoundException e) {
 
 			e.printStackTrace();
+			return false;
 		} catch (IOException e) {
 
 			e.printStackTrace();
+			return false;
 		}
+		
 		
 	}
 
-	public static void joinGroup(Usuario user, String ip) {
+	public static boolean joinGroup(Usuario user, String ip) {
 		if (servidor == null) {
 			servidor = new Servidor();
 			servidor.loadServer();
 		}
 		try {
-			if(!user.getGrupos().contains(ip))
+			if(!user.getGrupos().contains(ip)){
 			user.getGrupos().add(ip);
 			ObjectOutputStream oos = new ObjectOutputStream(
 					new FileOutputStream(LOGS + user.getLog()));
 			oos.writeObject(user);
+			oos.close();
+			return true;
+			}
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+
+			e.printStackTrace();
+			return false;
+		}
+		return false;
+		
+	}
+
+	public static void saveGroups() {
+		if (servidor == null) {
+			servidor = new Servidor();
+			servidor.loadServer();
+		}
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(
+					new FileOutputStream(GRUPOS));
+			oos.writeObject(servidor.grupos);
 			oos.close();
 		} catch (FileNotFoundException e) {
 
