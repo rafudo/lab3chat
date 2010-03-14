@@ -87,7 +87,9 @@ public class DiagLeaveGroup extends JDialog implements ActionListener {
 
 		if (e.getSource().equals(btnChange)) {
 			Grupo g =(Grupo) lstGroups.getSelectedValue();
+			if(g!=null)
 			changed=cliente.leaveGroup(g.getIp());
+			
 			
 		}
 		diag.dispose();

@@ -6,12 +6,13 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
+
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Observable;
-import java.util.Vector;
+
 
 import Servidor.Grupo;
 
@@ -45,12 +46,25 @@ public class Cliente extends Observable{
 		this.grupos=grupos;
 		this.port=port;		
 		this.grupos=grupos;
+		leaveGroups();
 		escucha=new ThreadEscucha(this);
 		escucha.start();
 		listenGroups = new ThreadListenGroups(this)	;
+		
 		listenGroups.start();
 	}
 	
+	private void leaveGroups() {
+		Object[] gs = grupos.values().toArray();
+		for(int i=0;i<gs.length;i++){
+			String ip = ((Grupo) gs[i]).getIp();
+			if(ip.startsWith("D")){
+				leaveGroup(ip);
+			}
+		}
+		
+	}
+
 	public void setPanel(ConnectedPane p){
 		panel=p;
 	}
@@ -241,6 +255,7 @@ public class Cliente extends Observable{
 				String ip = (String)Stream.receiveObject(s);
 				Grupo g = new Grupo(username, ip, nombre);
 				grupos.put(ip,g);
+				listenGroups.joinGroup(g.getIp());
 				setChanged();
 				notifyObservers();
 				clearChanged();
@@ -338,12 +353,15 @@ public class Cliente extends Observable{
 
 
 	public void sendMsg(String text, Grupo g) throws IOException {
+		
+		if(g!=null){
+			
 		DatagramSocket ds = new DatagramSocket();
 		InetAddress ip = InetAddress.getByName(g.getIp());
 		text = g.getId()+" ("+username+"): "+text;
 		DatagramPacket dp = new DatagramPacket(text.getBytes(), text.length(), ip, 2015);
 		ds.send(dp);
-		
+		}
 		
 	}
 
@@ -355,6 +373,7 @@ public class Cliente extends Observable{
 
 	public boolean joinGroup(Grupo g) {
 		try {
+			if(g==null)return false;
 			Socket s = new Socket(HOST, 2245);
 			Stream.sendObject(s, "JOINGROUP");
 			Stream.sendObject(s, username);			
@@ -390,6 +409,7 @@ public class Cliente extends Observable{
 			boolean b =Stream.receiveObject(s).equals("OK");
 			s.close();
 			if(b){
+				if(listenGroups!=null)
 				listenGroups.leaveGroup(ip);
 				grupos.remove(ip);
 				

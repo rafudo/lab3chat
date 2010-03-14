@@ -386,7 +386,7 @@ public class Servidor {
 					new FileOutputStream(LOGS + user.getLog()));
 			oos.writeObject(user);
 			oos.close();
-			if(servidor.grupos.get(ip).getOwner().equals(user.getLog())){
+			if(servidor.grupos.get(ip)!=null&&servidor.grupos.get(ip).getOwner().equals(user.getLog())){
 				System.out.println("ASDQEIEHGOAERIGHOAWRE");
 				servidor.grupos.remove(ip);
 				saveGroups();
@@ -411,7 +411,9 @@ public class Servidor {
 			servidor.loadServer();
 		}
 		try {
+			
 			if(!user.getGrupos().contains(ip)){
+			
 			user.getGrupos().add(ip);
 			ObjectOutputStream oos = new ObjectOutputStream(
 					new FileOutputStream(LOGS + user.getLog()));
@@ -449,6 +451,24 @@ public class Servidor {
 
 			e.printStackTrace();
 		}
+		
+	}
+
+	public static String createGroup(Usuario user, String nombre) {
+		int num1 = (int) (Math.random() * 256);
+		int num2 = (int) (Math.random() * 256);
+		while(servidor.grupos.containsKey("239.233."+num1+"."+num2)){
+		
+			num1 = (int) (Math.random() * 256);
+			num2 = (int) (Math.random() * 256);
+		}
+		String ip ="239.233."+num1+"."+num2;
+		Grupo group = new Grupo(user.getLog(), ip,nombre);
+		
+
+		servidor.grupos.put(ip, group);
+		
+		return ip;
 		
 	}
 }

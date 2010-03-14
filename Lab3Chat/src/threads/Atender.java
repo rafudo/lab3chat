@@ -10,7 +10,6 @@ import conectividad.Stream;
 
 import Servidor.Grupo;
 
-
 import Servidor.Servidor;
 import Servidor.Usuario;
 
@@ -76,8 +75,6 @@ public class Atender extends Thread {
 		}
 
 	}
-
-	
 
 	/**
 	 * Crea un nuevo usuario
@@ -148,16 +145,16 @@ public class Atender extends Thread {
 			for (int i = 0; i < n; i++) {
 				String ip = user.getGrupos().get(i);
 				Grupo g = Servidor.getGrupos().get(ip);
-				if(g!=null){
+				if (g != null) {
 					Stream.sendObject(cliente, g.getOwner());
 					Stream.sendObject(cliente, ip);
 					Stream.sendObject(cliente, g.getId());
-				}else{
+				} else {
 					Stream.sendObject(cliente, "");
-					Stream.sendObject(cliente, "D"+ip);
+					Stream.sendObject(cliente, "D" + ip);
 					Stream.sendObject(cliente, "");
 				}
-				
+
 			}
 
 			user.setIP((String) Stream.receiveObject(cliente));
@@ -169,7 +166,6 @@ public class Atender extends Thread {
 			for (int i = 0; i < user.amigos.size(); i++) {
 				informar(user.amigos.get(i), user);
 			}
-			
 
 			return true;
 		} else {
@@ -177,7 +173,8 @@ public class Atender extends Thread {
 			return false;
 		}
 	}
-	private void informar(String destiny, Usuario source){
+
+	private void informar(String destiny, Usuario source) {
 		if (Servidor.isConnected(destiny)) {
 			System.out.println("Esta enviando las notificaciones");
 			try {
@@ -345,11 +342,11 @@ public class Atender extends Thread {
 	private void unirGrupo() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		String ip = (String) Stream.receiveObject(cliente);		
-		if(Servidor.joinGroup(user, ip))
-		Stream.sendObject(cliente, "OK");
+		String ip = (String) Stream.receiveObject(cliente);
+		if (Servidor.joinGroup(user, ip))
+			Stream.sendObject(cliente, "OK");
 		else
-			Stream.sendObject(cliente, "ERROR");	
+			Stream.sendObject(cliente, "ERROR");
 	}
 
 	/**
@@ -358,60 +355,46 @@ public class Atender extends Thread {
 	private void crearGrupo() throws IOException, ClassNotFoundException {
 		Usuario user = Servidor.getUsuario((String) Stream
 				.receiveObject(cliente));
-		String nombre  = (String) Stream.receiveObject(cliente);
+		String nombre = (String) Stream.receiveObject(cliente);
 
-		Hashtable<String, Grupo> list = Servidor.getGrupos();
+		String ip = Servidor.createGroup(user, nombre);
+		Stream.sendObject(cliente, "OK");
 		
-			int num1 = (int) Math.random() * 256;
-			int num2 = (int) Math.random() * 256;
-			while(list.containsKey("239.233."+num1+"."+num2)){
-				num1 = (int) Math.random() * 256;
-				num2 = (int) Math.random() * 256;
-			}
-			Stream.sendObject(cliente, "OK");
-			String ip="239.233."+num1+"."+num2;
-			Stream.sendObject(cliente, ip);
-			
-			Grupo group = new Grupo(user.getLog(), ip,nombre);
-			list.put(ip, group);
-			user.addGrupo(ip);
-			
-			Stream.sendObject(cliente, "OK");
-			Servidor.joinGroup(user, ip);
-			Servidor.saveGroups();
-				
-			
-		
+		Stream.sendObject(cliente, ip);
+		Servidor.joinGroup(user, ip);
+		Servidor.saveGroups();
+
 	}
 
 	/**
 	 * Desea salirse de un grupo.
-	 * @throws ClassNotFoundException 
-	 * @throws IOException 
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws IOException
 	 */
 	private void salirGrupo() throws IOException, ClassNotFoundException {
-		Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
-		String ip =(String)Stream.receiveObject(cliente);
-		if(Servidor.leaveGroup(user, ip))
-		Stream.sendObject(cliente, "OK");
+		Usuario user = Servidor.getUsuario((String) Stream
+				.receiveObject(cliente));
+		String ip = (String) Stream.receiveObject(cliente);
+		if (Servidor.leaveGroup(user, ip))
+			Stream.sendObject(cliente, "OK");
 		else
-		Stream.sendObject(cliente, "ERROR");	
+			Stream.sendObject(cliente, "ERROR");
 	}
 
 	/**
 	 * Desea un listado de grupos
 	 */
-	private void listaGrupos() throws IOException{
-		Object[] grups= Servidor.getGrupos().values().toArray();
-		Stream.sendObject(cliente, ""+grups.length);
-		for(int i=0;i<grups.length;i++){
+	private void listaGrupos() throws IOException {
+		Object[] grups = Servidor.getGrupos().values().toArray();
+		Stream.sendObject(cliente, "" + grups.length);
+		for (int i = 0; i < grups.length; i++) {
 			Grupo g = (Grupo) grups[i];
 			Stream.sendObject(cliente, g.getOwner());
 			Stream.sendObject(cliente, g.getIp());
 			Stream.sendObject(cliente, g.getId());
 		}
-		
+
 	}
 
 }
-
