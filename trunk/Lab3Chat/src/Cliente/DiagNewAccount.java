@@ -34,7 +34,7 @@ public class DiagNewAccount extends JDialog implements ActionListener {
 
 	private DiagNewAccount(InterfazCliente interfaz) {
 		super(interfaz, "Cambio contraseña", true);
-		
+		created=false;
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		btnChange = new JButton("Crear");

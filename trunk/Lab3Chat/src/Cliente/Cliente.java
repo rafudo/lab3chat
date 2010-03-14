@@ -365,6 +365,9 @@ public class Cliente extends Observable{
 				grupos.put(g.getIp(), g);
 				listenGroups.joinGroup(g.getIp());
 			}
+			setChanged();
+			notifyObservers();
+			clearChanged();
 			return b;
 		
 		} catch (UnknownHostException e) {
@@ -391,6 +394,9 @@ public class Cliente extends Observable{
 				grupos.remove(ip);
 				
 			}
+			setChanged();
+			notifyObservers();
+			clearChanged();
 			return b;
 		
 		} catch (UnknownHostException e) {

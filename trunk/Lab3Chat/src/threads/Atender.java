@@ -393,9 +393,9 @@ public class Atender extends Thread {
 		Usuario user = Servidor.getUsuario((String)Stream.receiveObject(cliente));
 		String ip =(String)Stream.receiveObject(cliente);
 		if(Servidor.leaveGroup(user, ip))
-			Stream.sendObject(cliente, "OK");
-			else
-				Stream.sendObject(cliente, "ERROR");	
+		Stream.sendObject(cliente, "OK");
+		else
+		Stream.sendObject(cliente, "ERROR");	
 	}
 
 	/**

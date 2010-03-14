@@ -35,9 +35,10 @@ public class DiagLeaveGroup extends JDialog implements ActionListener {
 	private DiagLeaveGroup(InterfazCliente interfaz, Cliente cliente) {
 		super(interfaz, "Dejar Grupo", true);
 		this.cliente = cliente;
+		changed=false;
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		btnChange = new JButton("Unirse");
+		btnChange = new JButton("Dejar");
 		btnChange.addActionListener(this);
 		btnCancel = new JButton("Cancelar");
 		btnCancel.addActionListener(this);		
