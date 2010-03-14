@@ -4,11 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -18,11 +18,14 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
@@ -45,10 +48,17 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 	private JMenuItem itmCerrar;
 	private JMenuItem itmCambiar;
 	private JMenuItem itmAgregar;
-	private JList lstGrupos;
+	private JMenuItem itmNewGroup;
+	private JTextField txtGrupo;
+	private JComboBox cmbGrupos;
+	private JTextArea txtGrupos;
+	private JScrollPane spg;
+	private JMenuItem itmJoinGroup;
+	private JMenuItem itmLeaveGroup;
+
 	public ConnectedPane(InterfazCliente interfazCliente, Cliente client) {
 		interfaz = interfazCliente;
-		
+
 		JMenu menuSesion = new JMenu("Sesión");
 		itmCambiar = new JMenuItem("Cambiar contraseña");
 		itmCambiar.addActionListener(this);
@@ -61,9 +71,20 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 		itmAgregar = new JMenuItem("Agregar contacto");
 		itmAgregar.addActionListener(this);
 		menuCon.add(itmAgregar);
+		JMenu menuGru = new JMenu("Grupos");
+		itmNewGroup = new JMenuItem("Crear Grupo");
+		itmNewGroup.addActionListener(this);
+		menuGru.add(itmNewGroup);
+		itmJoinGroup = new JMenuItem("Unirse Grupo");
+		itmJoinGroup.addActionListener(this);
+		menuGru.add(itmJoinGroup);
+		itmLeaveGroup = new JMenuItem("Dejar Grupo");
+		itmLeaveGroup.addActionListener(this);
+		menuGru.add(itmLeaveGroup);
 		interfaz.getJMenuBar().removeAll();
 		interfaz.getJMenuBar().add(menuSesion);
 		interfaz.getJMenuBar().add(menuCon);
+		interfaz.getJMenuBar().add(menuGru);
 		this.cliente = client;
 		panelContactos = new JPanel();
 		panelContactos.setLayout(new BorderLayout());
@@ -74,11 +95,11 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 		panelNorte.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
 		nickLab = new JTextField(cliente.getFrase());
 		nickLab.setBackground(usernameLab.getBackground());
-		nickLab.setFont(new Font("Arial", Font.ITALIC|Font.BOLD, 12));
+		nickLab.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 12));
 		nickLab.addActionListener(this);
-		panelNorte.add(usernameLab,BorderLayout.CENTER);
-		panelNorte.add(nickLab,BorderLayout.SOUTH);
-	
+		panelNorte.add(usernameLab, BorderLayout.CENTER);
+		panelNorte.add(nickLab, BorderLayout.SOUTH);
+
 		lstContactos = new JList();
 		lstContactos.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -86,12 +107,13 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 					int index = lstContactos.locationToIndex(e.getPoint());
 					Contacto c = (Contacto) lstContactos.getModel()
 							.getElementAt(index);
-
-					c.openWindow();
+					if (c.isConnected())
+						c.openWindow();
 
 				}
 			}
 		});
+		lstContactos.setListData(cliente.getGrupos().values().toArray());
 		lstContactos.setCellRenderer(new ContactsRenderer());
 
 		cliente.addObserver(this);
@@ -100,34 +122,37 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 		spc.setViewportView(lstContactos);
 		panelContactos.add(spc, BorderLayout.CENTER);
 		panelContactos.add(panelNorte, BorderLayout.NORTH);
-		
-		panelGrupos= new JPanel();
-		panelGrupos.setLayout(new GridLayout(2,1));
-		JScrollPane spg = new JScrollPane();
-		lstGrupos= new JList();
-		lstGrupos.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					int index = lstGrupos.locationToIndex(e.getPoint());
-					Grupo g = (Grupo) lstGrupos.getModel()
-							.getElementAt(index);
 
-					
-
-				}
-			}
-		});
-		lstContactos.setListData(cliente.getGrupos().values().toArray());
-		spg.setViewportView(lstGrupos);
+		panelGrupos = new JPanel();
+		panelGrupos.setLayout(new BorderLayout());
+		spg = new JScrollPane();
+		txtGrupos = new JTextArea();
+		txtGrupos.setLineWrap(true);
+		spg.setViewportView(txtGrupos);
+		panelGrupos.add(spg, BorderLayout.CENTER);
+		JPanel panelSur = new JPanel();
+		panelSur.setLayout(new BorderLayout());
+		txtGrupo = new JTextField();
+		txtGrupo.setColumns(32);
+		txtGrupo.addActionListener(this);
+		panelSur.add(txtGrupo, BorderLayout.WEST);
+		cmbGrupos = new JComboBox();
+		DefaultComboBoxModel dcbm = new DefaultComboBoxModel(cliente
+				.getGrupos().values().toArray());
+		cmbGrupos.setModel(dcbm);
+		panelSur.add(cmbGrupos, BorderLayout.CENTER);
+		panelGrupos.add(panelSur, BorderLayout.SOUTH);
 		addTab("Contactos", panelContactos);
+		addTab("Grupos", panelGrupos);
 
 	}
 
 	@Override
 	public void update(Observable arg0, Object lista) {
 
-		System.out.println(((Object[]) lista).length);
-		lstContactos.setListData((Object[]) lista);
+		lstContactos.setListData(cliente.getContacts().values().toArray());
+		cmbGrupos.setModel(new DefaultComboBoxModel(cliente.getGrupos()
+				.values().toArray()));
 
 	}
 
@@ -141,32 +166,82 @@ public class ConnectedPane extends JTabbedPane implements Observer,
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(nickLab))
 			cliente.changeFrase(nickLab.getText());
-		else if(e.getSource().equals(itmCerrar)){
+		else if (e.getSource().equals(itmCerrar)) {
 			cliente.disconnect();
 			interfaz.loginScreen();
-		}else if(e.getSource().equals(itmCambiar)){
-			if(DiagChangePass.changePassword(interfaz, cliente))
-			{
-			JOptionPane
-			.showMessageDialog(this,"La contraseña fue cambiada exitosamente",
-					"Cambio de contraseña",JOptionPane.INFORMATION_MESSAGE);
-			}else{
+		} else if (e.getSource().equals(itmCambiar)) {
+			if (DiagChangePass.changePassword(interfaz, cliente)) {
 				JOptionPane
-				.showMessageDialog(this,"La contraseña no pudo ser cambiada",
-						"Cambio de contraseña",JOptionPane.ERROR_MESSAGE);
+						.showMessageDialog(this,
+								"La contraseña fue cambiada exitosamente",
+								"Cambio de contraseña",
+								JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(this,
+						"La contraseña no pudo ser cambiada",
+						"Cambio de contraseña", JOptionPane.ERROR_MESSAGE);
 			}
-		}else if(e.getSource().equals(itmAgregar)){
-			String con = JOptionPane.showInputDialog(this, "Escribe el username de tu contacto", "Agregar contacto", JOptionPane.PLAIN_MESSAGE);
-			if(cliente.addContact(con))
-				JOptionPane
-				.showMessageDialog(this,"El contacto fue agregado con exito",
-						 "Agregar contacto",JOptionPane.INFORMATION_MESSAGE);
+		} else if (e.getSource().equals(itmAgregar)) {
+			String con = JOptionPane.showInputDialog(this,
+					"Escribe el username de tu contacto", "Agregar contacto",
+					JOptionPane.PLAIN_MESSAGE);
+			if (cliente.addContact(con))
+				JOptionPane.showMessageDialog(this,
+						"El contacto fue agregado con exito",
+						"Agregar contacto", JOptionPane.INFORMATION_MESSAGE);
 			else
-				JOptionPane
-				.showMessageDialog(this,"El contacto no pudo ser agregado",
-						 "Agregar contacto",JOptionPane.ERROR_MESSAGE);
-		}
+				JOptionPane.showMessageDialog(this,
+						"El contacto no pudo ser agregado", "Agregar contacto",
+						JOptionPane.ERROR_MESSAGE);
+		} else if (e.getSource().equals(txtGrupo)) {
 
+			try {
+				cliente.sendMsg(txtGrupo.getText(), (Grupo) cmbGrupos
+						.getSelectedItem());
+				txtGrupo.setText("");
+			} catch (IOException e1) {
+
+				e1.printStackTrace();
+			}
+
+		} else if (e.getSource().equals(itmNewGroup)) {
+			String nombre = JOptionPane.showInputDialog(this,
+					"Ingrese un nombre para el grupo", "Nuevo grupo",
+					JOptionPane.QUESTION_MESSAGE);
+			if (nombre != null && !nombre.trim().equals("")
+					&& nombre.trim().length() <= 16)
+				if (cliente.createGroup(nombre.trim())) {
+					JOptionPane.showMessageDialog(this,
+							"El grupo fue creado con exito", "Nuevo grupo",
+							JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(this,
+							"El grupo no pudo ser creado", "Nuevo grupo",
+							JOptionPane.ERROR_MESSAGE);
+				}
+		} else if (e.getSource().equals(itmJoinGroup)) {
+			if (DiagJoinGroup.joinGroup(interfaz, cliente)) {
+				JOptionPane.showMessageDialog(this,
+						"Se unio al grupo con exito", "Membresia",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(this,
+						"No fue posible unirse al grupo", "Membresia",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} else if (e.getSource().equals(itmLeaveGroup)) {
+			if(DiagLeaveGroup.leaveGroup(interfaz, cliente)){
+				JOptionPane.showMessageDialog(this, "Se dejo el grupo con exito", "Membresia",JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				JOptionPane.showMessageDialog(this, "No fue posible dejar el grupo", "Membresia",JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	public void groupsMsg(String s) {
+		txtGrupos.append(s + "\n");
+		spg.getVerticalScrollBar().setValue(
+				spg.getVerticalScrollBar().getMaximum());
 	}
 
 }
