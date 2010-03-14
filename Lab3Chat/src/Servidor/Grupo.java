@@ -72,6 +72,11 @@ public class Grupo implements Serializable
 		return id;
 	}
 	
+	public String toString(){
+		return id;
+	}
+	
+	
 	
 	
 	
